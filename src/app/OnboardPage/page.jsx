@@ -1,10 +1,9 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Select,SelectContent, SelectItem } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 const OnboardingForm = () => {
   const [step, setStep] = useState(1);
@@ -13,7 +12,7 @@ const OnboardingForm = () => {
     dateOfBirth: "",
     address: "",
     phone: "",
-    plan: "GOLD", // Default plan
+    plan: "GOLD", // ✅ Default plan set to "GOLD"
   });
   const router = useRouter();
 
@@ -22,16 +21,30 @@ const OnboardingForm = () => {
   };
 
   const handleSkip = () => {
-    setStep(step + 1);
+    router.refresh();
+    router.push("/dashboard");
+  };
+
+  const isRecipientDetailsFilled = () => {
+    return formData.recipientName && formData.dateOfBirth && formData.address && formData.phone;
   };
 
   const handleSubmit = async () => {
-    await fetch("/api/recipients", {
+    console.log("Form Data:", formData);
+    const response = await fetch("/api/recipients", {
       method: "POST",
       body: JSON.stringify(formData),
       headers: { "Content-Type": "application/json" },
     });
-    router.push("/dashboard");
+    const data = await response.json();
+    if (!response.ok) {
+      console.error('Registration failed:', data.error); // Log the error for debugging
+      alert(`Registration failed: ${data.error || 'Unknown error'}`); // Display user-friendly error
+      throw new Error(data.error || 'Registration failed');
+    } else {
+      router.refresh();
+      router.push("/dashboard");
+    }
   };
 
   return (
@@ -41,13 +54,54 @@ const OnboardingForm = () => {
           {step === 1 && (
             <div>
               <h2 className="text-lg font-bold mb-4">Add Recipient Details</h2>
-              <Input name="recipientName" placeholder="Full Name" onChange={handleChange} />
-              <Input type="date" name="dateOfBirth" placeholder="Date of Birth" onChange={handleChange} />
-              <Input name="address" placeholder="Address" onChange={handleChange} />
-              <Input name="phone" placeholder="Phone" onChange={handleChange} />
+              <div className="space-y-3">
+              <div>
+                <label htmlFor="recipientName" className="block text-sm font-medium text-gray-700">
+                  Full Name
+                </label>
+                <input
+                  id="recipientName"
+                  name="recipientName"
+                  placeholder="Enter full name"
+                  onChange={handleChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+                />
+              </div>
+              <div>
+                <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700">
+                Date of Birth
+                </label>
+                <input
+                  type="date" id="dateOfBirth" name="dateOfBirth"
+                  placeholder="Enter full name"
+                  onChange={handleChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+                />
+              </div>
+              <div>
+              <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+               Address
+              </label>
+              <input
+                id="address" name="address" placeholder="Enter address"
+                onChange={handleChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+              />
+            </div>
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                Mobile Number
+              </label>
+              <input
+                id="phone" name="phone" placeholder="Enter phone number"
+                onChange={handleChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+              />
+            </div>
+              </div>
               <div className="flex justify-between mt-4">
-                <Button onClick={handleSkip} variant="outline">Skip</Button>
-                <Button onClick={() => setStep(2)}>Next</Button>
+                <Button variant="outline" onClick={handleSkip} >Skip</Button>
+                <Button onClick={() => setStep(2)} disabled={!isRecipientDetailsFilled()}>Next</Button>
               </div>
             </div>
           )}
@@ -55,15 +109,21 @@ const OnboardingForm = () => {
           {step === 2 && (
             <div>
               <h2 className="text-lg font-bold mb-4">Choose a Plan</h2>
-              <Select>
-              <SelectContent name="plan" onChange={handleChange}>
-                <SelectItem value="GOLD">Gold (Default)</SelectItem>
-                <SelectItem value="DIAMOND">Diamond</SelectItem>
-                <SelectItem value="PLATINUM">Platinum</SelectItem>
-              </SelectContent>
+              <Select value={formData.plan} onValueChange={(value) => setFormData({ ...formData, plan: value })}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a plan" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="GOLD">Gold Plan - Basic coverage</SelectItem>
+                  <SelectItem value="DIAMOND">Diamond Plan - Includes at-home testing</SelectItem>
+                  <SelectItem value="PLATINUM">Platinum Plan - Full medical coverage + emergency services</SelectItem>
+                </SelectContent>
               </Select>
+              <p className="mt-2 text-blue-600 cursor-pointer hover:underline">
+                <a href="/plan-details">Check out our plan details</a>
+              </p>
               <div className="flex justify-between mt-4">
-                <Button onClick={handleSkip} variant="outline">Skip</Button>
+                <Button variant="outline" onClick={handleSkip} >Skip</Button>
                 <Button onClick={() => setStep(3)}>Next</Button>
               </div>
             </div>

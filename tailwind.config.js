@@ -24,8 +24,8 @@ module.exports = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "#0891b2",
+          foreground: "#ffffff",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -53,18 +53,18 @@ module.exports = {
         },
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
+        lg: `var(--radius)`,
+        md: `calc(var(--radius) - 2px)`,
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
         "accordion-down": {
-          from: { height: "0" },
+          from: { height: 0 },
           to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
           from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
+          to: { height: 0 },
         },
       },
       animation: {
