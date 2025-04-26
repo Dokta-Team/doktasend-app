@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 const HomePageRedirect = async () => {
-  redirect("/dashboard");
+  redirect("/api/auth/signin");
 };
 
 export default HomePageRedirect;
