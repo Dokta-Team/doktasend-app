@@ -46,6 +46,13 @@ const RegisterPage = () => {
     setError("");
 
     if (currentStep === 1) {
+      // Check if passwords match
+      if (formData.password !== formData.cpassword) {
+        setError("Passwords do not match.");
+        setLoading(false);
+        return; // Stop submission
+      }
+
       // Step 1: Send Verification Token
       try {
         const response = await fetch("/api/send-verification-token", {
@@ -219,16 +226,24 @@ const RegisterPage = () => {
                   <label htmlFor="plan" className="text-sm font-medium">
                     Plan
                   </label>
-                  <Input
-                    id="plan"
-                    type="tel"
-                    placeholder="Enter your phone number"
+                  {/* Changed from Input to Select */}
+                  <Select
                     value={formData.plan}
-                    onChange={(e) =>
-                      setFormData({ ...formData, phone: e.target.value })
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, plan: value })
                     }
                     required
-                  />
+                  >
+                    <SelectTrigger id="plan">
+                      <SelectValue placeholder="Select a plan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {/* Add your plan options here */}
+                      <SelectItem value="basic">Basic</SelectItem>
+                      <SelectItem value="pro">Pro</SelectItem>
+                      <SelectItem value="enterprise">Enterprise</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <Button type="submit" className="w-full" disabled={loading}>
