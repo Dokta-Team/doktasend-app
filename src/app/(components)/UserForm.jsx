@@ -23,11 +23,13 @@ const RegisterPage = () => {
   const [verificationToken, setVerificationToken] = useState("");
   const [tokenVerified, setTokenVerified] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
+    fname: "",
+    lname: "",
     email: "",
     password: "",
-    role: "",
+    cpassword: "",
     phone: "",
+    plan: "",
   });
 
   const handleChange = (e) => {
@@ -44,6 +46,13 @@ const RegisterPage = () => {
     setError("");
 
     if (currentStep === 1) {
+      // Check if passwords match
+      if (formData.password !== formData.cpassword) {
+        setError("Passwords do not match.");
+        setLoading(false);
+        return; // Stop submission
+      }
+
       // Step 1: Send Verification Token
       try {
         const response = await fetch("/api/send-verification-token", {
@@ -104,13 +113,26 @@ const RegisterPage = () => {
             {currentStep === 1 && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-medium">
-                    Full Name
+                  <label htmlFor="fname" className="text-sm font-medium">
+                    First Name
                   </label>
                   <Input
-                    id="name"
-                    placeholder="Enter your full name"
-                    value={formData.name}
+                    id="fname"
+                    placeholder="Enter your last name"
+                    value={formData.fname}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="lname" className="text-sm font-medium">
+                    Last Name
+                  </label>
+                  <Input
+                    id="lname"
+                    placeholder="Enter your last name"
+                    value={formData.lname}
                     onChange={handleChange}
                     required
                   />
@@ -158,26 +180,30 @@ const RegisterPage = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="role" className="text-sm font-medium">
-                    Role
+                  <label htmlFor="cpassword" className="text-sm font-medium">
+                    Confirm Password
                   </label>
-                  <Select
-                    value={formData.role}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, role: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="sponsor">Sponsor</SelectItem>
-                      <SelectItem value="agent">Agent</SelectItem>
-                      <SelectItem value="medical">
-                        Medical Professional
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="relative">
+                    <Input
+                      id="cpassword"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Confirm your password"
+                      value={formData.cpassword}
+                      onChange={handleChange}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-gray-500" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-gray-500" />
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -195,6 +221,31 @@ const RegisterPage = () => {
                     required
                   />
                 </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="plan" className="text-sm font-medium">
+                    Plan
+                  </label>
+                  {/* Changed from Input to Select */}
+                  <Select
+                    value={formData.plan}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, plan: value })
+                    }
+                    required
+                  >
+                    <SelectTrigger id="plan">
+                      <SelectValue placeholder="Select a plan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {/* Add your plan options here */}
+                      <SelectItem value="basic">Basic</SelectItem>
+                      <SelectItem value="pro">Pro</SelectItem>
+                      <SelectItem value="enterprise">Enterprise</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Sending Token..." : "Next"}
                 </Button>
