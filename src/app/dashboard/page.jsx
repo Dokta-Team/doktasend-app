@@ -4,7 +4,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Bell, User, Calendar, Activity } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useRouter } from "next/navigation";
 
 const SponsorDashboard = () => {
   const [activeRecipient, setActiveRecipient] = useState(null);
