@@ -2,13 +2,11 @@
 import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Bell, User, Calendar, Activity } from "lucide-react";
+import { User, Calendar, Activity } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-const SponsorDashboard = () => {
-  const [activeRecipient, setActiveRecipient] = useState(null);
+const SponsorDashboardClient = ({ userName }) => {
   const [recipients, setRecipients] = useState([]);
-  const [userName, setUserName] = useState(""); // State to store user's name
   const router = useRouter();
 
   useEffect(() => {
@@ -17,7 +15,6 @@ const SponsorDashboard = () => {
       if (response.ok) {
         const data = await response.json();
         setRecipients(data.recipients);
-        setUserName(data.userName); // Extract and set user's name
       } else {
         console.error("Failed to fetch dashboard data");
       }
@@ -126,4 +123,4 @@ const SponsorDashboard = () => {
   );
 };
 
-export default SponsorDashboard;
+export default SponsorDashboardClient;

@@ -1,15 +1,12 @@
 import Link from "next/link";
-import { getServerSession } from "next-auth";
-import { options } from "../api/auth/[...nextauth]/options";
-import { Button } from "@/components/ui/button";
+import { getCurrentUser } from "@/lib/server-auth";
 
 const Nav = async () => {
-  const session = await getServerSession(options);
+  const user = await getCurrentUser();
 
   return (
     <header className="px-4 lg:px-6 h-16 flex items-center shadow-md bg-white">
-      <Link className="flex items-center justify-center" href="#">
-        {/* <Heart className="h-6 w-6 text-primary" /> */}
+      <Link className="flex items-center justify-center" href="/">
         <span className="ml-2 text-2xl font-extrabold text-primary">
           DoktaSend
         </span>
@@ -21,24 +18,21 @@ const Nav = async () => {
         >
           Dashboard
         </Link>
-        {session ? (
+        {user ? (
           <Link
-            href="api/auth/signout?callbackUrl=/"
+            href="/auth/login"
             className="text-sm font-medium hover:text-primary"
           >
             Logout
           </Link>
         ) : (
           <Link
-            href="api/auth/signin"
+            href="/auth/login"
             className="text-sm font-medium hover:text-primary"
           >
             Login
           </Link>
         )}
-        {/* <Button variant="default" size="sm" className="shadow-md hover:bg-secondary-foreground hover:text-secondary" onClick={() => router.push('/CreateUser')}>
-          Sign Up
-        </Button> */}
       </nav>
     </header>
   );

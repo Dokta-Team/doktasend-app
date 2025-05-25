@@ -2,10 +2,6 @@ import mongoose, { Schema } from "mongoose";
 
 mongoose.connect(process.env.MONGODB_URI);
 mongoose.Promise = global.Promise;
-const userRoles = {
-  SPONSOR: "sponsor",
-  ADMIN: "admin",
-};
 
 const UserSchema = new mongoose.Schema(
   {
@@ -18,15 +14,15 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    fname: {
+    first_name: {
       type: String,
       required: true,
     },
-    lname: {
+    last_name: {
       type: String,
       required: true,
     },
-    plan: {
+    role: {
       type: String,
       required: true,
     },

@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
-
-// In-memory storage for tokens (replace with database in production)
-export const verificationTokens = {};
+import otp from "@/app/(models)/OTP"; // Import the User model
 
 async function generateVerificationToken() {
   return (
@@ -42,11 +40,24 @@ export async function POST(request) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
+    // const user = await User.findOne({ email });
+
+    // if (!user) {
+    //   // If user doesn't exist, you might want to handle this differently
+    //   // depending on your signup flow (e.g., create a pending user)
+    //   return NextResponse.json({ error: "User not found" }, { status: 404 });
+    // }
+
     const verificationToken = await generateVerificationToken();
-    verificationTokens[email] = verificationToken; // Store token in memory
+    const verificationTokenExpiry = new Date(Date.now() + 3600000); // Token valid for 1 hour
 
     await sendVerificationEmail(email, verificationToken);
-
+    const newOtp = new otp({
+      email: email,
+      otp: verificationToken,
+      expiresAt: verificationTokenExpiry,
+    });
+    await newOtp.save();
     return NextResponse.json(
       { message: "Verification token sent to email" },
       { status: 200 }

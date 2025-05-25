@@ -1,21 +1,18 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getCurrentUser } from "@/lib/server-auth";
 import Recipient from "@/app/(models)/Recipients";
 import User from "@/app/(models)/User";
-import { options } from "../auth/[...nextauth]/options";
 
 export async function POST(req) {
   try {
-    // Get session from NextAuth
-    const session = await getServerSession(options);
+    // Get user from custom auth
+    const user = await getCurrentUser();
 
-    // Ensure user is authenticateds
-    console.log(session);
-    if (!session || !session.user || !session.user.name) {
+    if (!user || !user.name) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-    // Extract sponsor ID from session
-    const sponsorName = session.user.name;
+    // Extract sponsor ID from user
+    const sponsorName = user.name;
     // Parse request body (excluding sponsorId)
     const { userData } = await req.json();
 
@@ -47,8 +44,8 @@ export async function POST(req) {
       dateOfBirth: userData.dateOfBirth,
       address: userData.address,
       phone: userData.phone,
-      sponsor: sponsor, // Assigned from session - now using name
-      plan: userData.plan || "GOLD", // Default plan if not provided
+      sponsor: sponsor,
+      plan: userData.plan || "GOLD",
     };
 
     await Recipient.create(newRecipient);
@@ -58,7 +55,7 @@ export async function POST(req) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Recipient registration error:", error); // Log the detailed error
+    console.error("Recipient registration error:", error);
     return NextResponse.json(
       { message: "Registration failed", error: error.message },
       { status: 500 }

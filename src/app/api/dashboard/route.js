@@ -1,17 +1,16 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { options } from "../auth/[...nextauth]/options";
-import Recepient from "@/app/(models)/Recipients"; // Import the Recipient model
-import User from "@/app/(models)/User"; // Import the User model
+import { getCurrentUser } from "@/lib/server-auth";
+import Recepient from "@/app/(models)/Recipients";
+import User from "@/app/(models)/User";
 
 export async function GET(req, res) {
-  const session = await getServerSession(options);
+  const user = await getCurrentUser();
 
-  if (!session || !session.user || !session.user.name) {
+  if (!user || !user.name) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  let userName = session.user.name || "Guest"; // Get user name from session or default
+  let userName = user.name || "Guest";
   const sponsorId = await User.findOne({ name: userName });
   try {
     // Fetch recipients from the database, filtered by sponsor ID
