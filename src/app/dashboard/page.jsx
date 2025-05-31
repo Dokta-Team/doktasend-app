@@ -4,19 +4,33 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { User, Calendar, Activity } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { get } from "@/lib/http";
 
 const SponsorDashboardClient = ({ userName }) => {
   const [recipients, setRecipients] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
+    // recipients
+    // const fetchDashboardData = async () => {
+    //   const response = await fetch("/api/dashboard");
+    //   if (response.ok) {
+    //     const data = await response.json();
+    //     setRecipients(data.recipients);
+    //   } else {
+    //     console.error("Failed to fetch dashboard data");
+    //   }
+    // };
+    // fetchDashboardData();
     const fetchDashboardData = async () => {
-      const response = await fetch("/api/dashboard");
-      if (response.ok) {
-        const data = await response.json();
-        setRecipients(data.recipients);
-      } else {
-        console.error("Failed to fetch dashboard data");
+      const response = await get("sponsor/recipients");
+      // console.log("response", response)
+      if (response && response.success === true) {
+        setRecipients(response.payload)
+      }
+      else {
+        // setIsLoading(false);
+        alert(response?.message || "Login failed");
       }
     };
     fetchDashboardData();

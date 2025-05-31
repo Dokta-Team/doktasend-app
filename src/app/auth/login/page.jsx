@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { post, setToken } from "@/lib/http";
 
 export default function Login() {
   const router = useRouter();
@@ -32,44 +33,38 @@ export default function Login() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-
-    // Validate form
-    if (!formData.email || !formData.password) {
-      setError("Email and password are required");
-      return;
-    }
-
-    setIsLoading(true);
-
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
+      e.preventDefault();
+      setError("");
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Login failed");
+      // Validate form
+      if (!formData.email || !formData.password) {
+        setError("Email and password are required");
+        return;
       }
 
-      // Redirect based on role
-      if (data.user.role === "admin") {
-        router.push("/admin");
-      } else {
-        router.push("/dashboard");
+      setIsLoading(true);
+
+      const response = await post('sponsor/login', formData)
+      // const data = await response.json();
+      if (response && response.success === true) {
+        const accessToken = response.payload.accessToken
+        setToken(accessToken)
+        if (response.payload.role === 'admin') {
+          setIsLoading(false);
+          router.push("/admin");
+        }
+        else {
+          setIsLoading(false);
+          router.push("/dashboard");
+        }
+      }
+      else {
+        setIsLoading(false);
+        throw new Error(response?.message || "Login failed");
       }
     } catch (error) {
       setError(error.message);
-    } finally {
       setIsLoading(false);
     }
   };

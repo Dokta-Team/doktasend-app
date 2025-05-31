@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { getCurrentUser } from "@/lib/server-auth";
 
 const Nav = async () => {
-  const user = await getCurrentUser();
+  // const user = await getCurrentUser();
+  const user = {}
 
   return (
     <header className="px-4 lg:px-6 h-16 flex items-center shadow-md bg-white">

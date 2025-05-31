@@ -29,104 +29,104 @@ export default function RegisterPage() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    // setError("");
 
-    if (
-      !formData.fname ||
-      !formData.lname ||
-      !formData.email ||
-      !formData.password
-    ) {
-      setError("All fields are required");
-      return;
-    }
+    // if (
+    //   !formData.fname ||
+    //   !formData.lname ||
+    //   !formData.email ||
+    //   !formData.password
+    // ) {
+    //   setError("All fields are required");
+    //   return;
+    // }
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
+    // if (formData.password !== formData.confirmPassword) {
+    //   setError("Passwords do not match");
+    //   return;
+    // }
 
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters");
-      return;
-    }
+    // if (formData.password.length < 6) {
+    //   setError("Password must be at least 6 characters");
+    //   return;
+    // }
 
-    setIsLoading(true);
+    // setIsLoading(true);
 
-    if (currentStep === 1) {
-      try {
-        // Step 1: Register user
-        const registerResponse = await fetch("/api/auth/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            fname: formData.fname,
-            lname: formData.lname,
-            email: formData.email,
-            password: formData.password,
-            phone: formData.phone,
-          }),
-        });
+    // if (currentStep === 1) {
+    //   try {
+    //     // Step 1: Register user
+    //     const registerResponse = await fetch("/api/auth/register", {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify({
+    //         fname: formData.fname,
+    //         lname: formData.lname,
+    //         email: formData.email,
+    //         password: formData.password,
+    //         phone: formData.phone,
+    //       }),
+    //     });
 
-        const registerData = await registerResponse.json();
+    //     const registerData = await registerResponse.json();
 
-        if (!registerResponse.ok) {
-          throw new Error(registerData.error || "Registration failed.");
-        }
+    //     if (!registerResponse.ok) {
+    //       throw new Error(registerData.error || "Registration failed.");
+    //     }
 
-        // Step 2: Send verification token
-        const tokenRes = await fetch("/api/send-verification-token", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: formData.email }),
-        });
+    //     // Step 2: Send verification token
+    //     const tokenRes = await fetch("/api/send-verification-token", {
+    //       method: "POST",
+    //       headers: { "Content-Type": "application/json" },
+    //       body: JSON.stringify({ email: formData.email }),
+    //     });
 
-        const tokenData = await tokenRes.json();
-        console.log("love", tokenData);
-        if (!tokenRes.ok) {
-          console.log("lov", tokenRes);
-          throw new Error(
-            tokenData.error || "Failed to send verification token."
-          );
-        }
+    //     const tokenData = await tokenRes.json();
+    //     console.log("love", tokenData);
+    //     if (!tokenRes.ok) {
+    //       console.log("lov", tokenRes);
+    //       throw new Error(
+    //         tokenData.error || "Failed to send verification token."
+    //       );
+    //     }
 
-        // Move to Step 2 on success
-        setCurrentStep(2);
-        return; // Prevent further execution of handleSubmit for step 1
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    } else if (currentStep === 2) {
-      try {
-        const response = await fetch("/api/verify-token", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userData: formData,
-            token: verificationToken,
-          }),
-        });
+    //     // Move to Step 2 on success
+    //     setCurrentStep(2);
+    //     return; // Prevent further execution of handleSubmit for step 1
+    //   } catch (error) {
+    //     setError(error.message);
+    //   } finally {
+    //     setIsLoading(false);
+    //   }
+    // } else if (currentStep === 2) {
+    //   try {
+    //     const response = await fetch("/api/verify-token", {
+    //       method: "POST",
+    //       headers: { "Content-Type": "application/json" },
+    //       body: JSON.stringify({
+    //         userData: formData,
+    //         token: verificationToken,
+    //       }),
+    //     });
 
-        const data = await response.json();
+    //     const data = await response.json();
 
-        if (!response.ok) {
-          throw new Error(data.error || "Invalid verification token.");
-        }
+    //     if (!response.ok) {
+    //       throw new Error(data.error || "Invalid verification token.");
+    //     }
 
-        setTokenVerified(true);
-        router.refresh();
-        router.push(`/confirmation?plan=${formData.plan}`);
-        return; // Prevent further execution of handleSubmit for step 1
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    }
+    //     setTokenVerified(true);
+    //     router.refresh();
+    //     router.push(`/confirmation?plan=${formData.plan}`);
+    //     return; // Prevent further execution of handleSubmit for step 1
+    //   } catch (error) {
+    //     setError(error.message);
+    //   } finally {
+    //     setIsLoading(false);
+    //   }
+    // }
   };
 
   return (
