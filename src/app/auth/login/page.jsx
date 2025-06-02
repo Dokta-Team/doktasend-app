@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { post, setToken } from "@/lib/http";
+import { useAuthContext } from "@/context/authContext";
 
 export default function Login() {
   const router = useRouter();
@@ -26,6 +27,7 @@ export default function Login() {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+    const { saveUser } = useAuthContext();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,8 +50,9 @@ export default function Login() {
       const response = await post('sponsor/login', formData)
       // const data = await response.json();
       if (response && response.success === true) {
-        const accessToken = response.payload.accessToken
+        const { accessToken, ...userWithoutToken } = response.payload.sponsor;
         setToken(accessToken)
+        saveUser(userWithoutToken)
         if (response.payload.role === 'admin') {
           setIsLoading(false);
           router.push("/admin");

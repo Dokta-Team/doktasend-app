@@ -4,22 +4,30 @@ const handleError = (error) => {
     if (error.response) {
         const status = error.response.status;
         const message = error.response.data?.message || 'An error occurred';
-        console.log("status", status)
         switch (status) {
             case 400:
-                throw new Error(message || 'Bad Request');
+                alert(message || 'Bad Request');
+                break;
+            case 401:
+                window.location.href = '/auth/login';
+                break;
             case 402:
-                throw new Error(message || 'Payment Required');
+                alert(message || 'Payment Required');
+                break;
             case 500:
-                throw new Error(message || 'Internal Server Error');
+                alert(message || 'Internal Server Error');
+                break;
             default:
-                throw new Error(message);
+                alert(message);
         }
-    } else if (error.request) {
+    }
+    else if (error.request) {
+        console.log("Http error", error.status)
         // throw new Error('No response from server');
         alert('No response from server');
-    } else {
-        throw new Error(error.message || 'Unexpected error');
+    }
+    else {
+        alert(error.message || 'Unexpected error');
     }
 };
 

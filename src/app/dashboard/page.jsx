@@ -30,7 +30,7 @@ const SponsorDashboardClient = ({ userName }) => {
       }
       else {
         // setIsLoading(false);
-        alert(response?.message || "Login failed");
+        alert(response?.message || "Something went wrong");
       }
     };
     fetchDashboardData();

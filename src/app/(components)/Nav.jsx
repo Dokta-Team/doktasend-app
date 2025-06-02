@@ -1,9 +1,13 @@
+'use client';
 import Link from "next/link";
+import { useAuthContext } from "@/context/authContext"; // ✅ not async
+import { useRouter } from "next/navigation";
 
-const Nav = async () => {
+const Nav = () => {
   // const user = await getCurrentUser();
+  const { getSavedUser } = useAuthContext();
   const user = {}
-
+  const router = useRouter();
   return (
     <header className="px-4 lg:px-6 h-16 flex items-center shadow-md bg-white">
       <Link className="flex items-center justify-center" href="/">
@@ -19,12 +23,22 @@ const Nav = async () => {
           Dashboard
         </Link>
         {user ? (
-          <Link
-            href="/auth/login"
+          // <Link
+          //   href="/auth/login"
+          //   className="text-sm font-medium hover:text-primary"
+          // >
+          //   Logout
+          // </Link>
+          <button
             className="text-sm font-medium hover:text-primary"
+            onClick={() => {
+              // You can also make an API call to log out
+              localStorage.removeItem("user");
+              // router.push("/auth/login");
+            }}
           >
             Logout
-          </Link>
+          </button>
         ) : (
           <Link
             href="/auth/login"
