@@ -1,18 +1,22 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
 export default function RegisterPage() {
+
+  const searchParams = useSearchParams();
+  const initialPlan = searchParams.get("plan") || "gold";
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    fname: "",
-    lname: "",
-    phone: "",
+    firstName: "",
+    lastName: "",
+    mobile: "",
+    plan: initialPlan,
   });
 
   const [error, setError] = useState("");
@@ -21,12 +25,16 @@ export default function RegisterPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [verificationToken, setVerificationToken] = useState("");
   const [tokenVerified, setTokenVerified] = useState(false);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+
   const handleTokenChange = (e) => {
     setVerificationToken(e.target.value);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     // setError("");
@@ -142,10 +150,10 @@ export default function RegisterPage() {
                 <div className="space-y-2">
                   <Label htmlFor="fname">First Name</Label>
                   <Input
-                    id="fname"
-                    name="fname"
+                    id="firstName"
+                    name="firstName"
                     placeholder="John"
-                    value={formData.fname}
+                    value={formData.firstName}
                     onChange={handleChange}
                     required
                   />
@@ -154,10 +162,10 @@ export default function RegisterPage() {
                 <div className="space-y-2">
                   <Label htmlFor="lname">Last Name</Label>
                   <Input
-                    id="lname"
-                    name="lname"
+                    id="lastName"
+                    name="lastName"
                     placeholder="Doe"
-                    value={formData.lname}
+                    value={formData.lastName}
                     onChange={handleChange}
                     required
                   />
@@ -200,6 +208,21 @@ export default function RegisterPage() {
                   />
                 </div>
 
+                {/* ✅ Plan Selection Dropdown */}
+                <div className="space-y-2">
+                  <Label htmlFor="plan">Select Plan</Label>
+                  <select
+                    id="plan"
+                    name="plan"
+                    value={formData.plan}
+                    onChange={handleChange}
+                    className="px-3 py-2 border rounded-md bg-gray-100 text-sm text-gray-700 w-full"
+                  >
+                    <option value="gold">Gold (Free)</option>
+                    <option value="diamond">Diamond</option>
+                    <option value="platinum">Platinum</option>
+                  </select>
+                </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone Number</Label>
                   <div className="flex items-center space-x-2">
@@ -223,11 +246,10 @@ export default function RegisterPage() {
                       id="phone"
                       type="tel"
                       placeholder="8123456789"
-                      value={formData.phone}
+                      value={formData.mobile}
+                      // maxLength={10}
                       onChange={(e) => {
-                        const value = e.target.value
-                          .replace(/\D/g, "")
-                          .slice(0, 10);
+                        const value = e.target.value.replace(/\D/g, "").slice(0, 10);
                         setFormData({ ...formData, phone: value });
                       }}
                       required

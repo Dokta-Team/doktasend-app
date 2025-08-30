@@ -2,7 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Nav from "./(components)/Nav";
 import { AuthProvider } from "@/context/authContext";
-
+import { Toaster } from "@/components/ui/sonner";
 
 
 const geistSans = Geist({
@@ -27,6 +27,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <Nav />
           {children}
+          <Toaster position="top-center" />
         </AuthProvider>
       </body>
     </html>

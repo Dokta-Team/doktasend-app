@@ -4,111 +4,117 @@ import { useParams, useRouter } from "next/navigation";
 import Head from "next/head";
 import { Card, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useAuthContext } from "@/context/authContext";
 
 const RecipientDetailsPage = () => {
   const params = useParams();
+  const { getSavedUser } = useAuthContext();
   const { username, recipientId } = params;
-  const [recipient, setRecipient] = useState(null);
+  const [recipient, setRecipient] = useState({});
   const [activeTab, setActiveTab] = useState("overview");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    const fetchRecipientData = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          `/api/dashboard/${username}/${recipientId}`
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setRecipient({
-            id: data.recipient._id,
-            name: data.recipient.name,
-            age: data.recipient.dateOfBirth,
-            address: data.recipient.address,
-            phone: data.recipient.phone,
-            onboardDate: data.recipient.createdAt,
-            plan: data.recipient.plan,
-            sponsor: data.recipient.sponsor
-              ? {
-                  name: data.recipient.sponsor.name,
-                  location: "Toronto, Canada",
-                  relationship: "Son",
-                }
-              : { name: "Unknown", location: "N/A", relationship: "N/A" },
-            upcomingVisits: data.recipient.upcomingVisits || [
-              {
-                type: "Nurse Visit",
-                date: "2025-04-05",
-                time: "10:00 AM",
-                status: "Scheduled",
-              },
-              {
-                type: "Doctor Consultation",
-                date: "2025-04-15",
-                time: "2:00 PM",
-                status: "Pending Confirmation",
-              },
-            ],
-            medications: data.recipient.medications || [
-              {
-                name: "Lisinopril",
-                dosage: "10mg",
-                frequency: "Once daily",
-                startDate: "2024-11-10",
-                endDate: "Ongoing",
-              },
-              {
-                name: "Metformin",
-                dosage: "500mg",
-                frequency: "Twice daily",
-                startDate: "2024-12-05",
-                endDate: "Ongoing",
-              },
-            ],
-            recentActivities: data.recipient.recentActivities || [
-              {
-                date: "2025-03-28",
-                type: "Check-in call",
-                notes: "Recipient reported feeling well. No complaints.",
-                agent: "Adeola F.",
-              },
-              {
-                date: "2025-03-25",
-                type: "Medication delivery",
-                notes: "Monthly supply of Lisinopril and Metformin delivered",
-                agent: "Pharmacy Partner",
-              },
-              {
-                date: "2025-03-22",
-                type: "Nurse Visit",
-                notes:
-                  "Vitals checked, all within normal range. Recipient advised to increase water intake.",
-                agent: "Nurse Chioma B.",
-              },
-            ],
-          });
-        } else {
-          console.error("Failed to fetch recipient data");
-        }
-      } catch (error) {
-        console.error("Error fetching recipient data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    const sponsor = getSavedUser()
+    console.log("sponsor", sponsor)
+  }, [])
+  // useEffect(() => {
+  //   const fetchRecipientData = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const response = await fetch(
+  //         `/api/dashboard/${recipientId}`
+  //       );
+  //       if (response.ok) {
+  //         const data = await response.json();
+  //         setRecipient({
+  //           id: data.recipient._id,
+  //           name: data.recipient.name,
+  //           age: data.recipient.dateOfBirth,
+  //           address: data.recipient.address,
+  //           phone: data.recipient.phone,
+  //           onboardDate: data.recipient.createdAt,
+  //           plan: data.recipient.plan,
+  //           sponsor: data.recipient.sponsor
+  //             ? {
+  //                 name: data.recipient.sponsor.name,
+  //                 location: "Toronto, Canada",
+  //                 relationship: "Son",
+  //               }
+  //             : { name: "Unknown", location: "N/A", relationship: "N/A" },
+  //           upcomingVisits: data.recipient.upcomingVisits || [
+  //             {
+  //               type: "Nurse Visit",
+  //               date: "2025-04-05",
+  //               time: "10:00 AM",
+  //               status: "Scheduled",
+  //             },
+  //             {
+  //               type: "Doctor Consultation",
+  //               date: "2025-04-15",
+  //               time: "2:00 PM",
+  //               status: "Pending Confirmation",
+  //             },
+  //           ],
+  //           medications: data.recipient.medications || [
+  //             {
+  //               name: "Lisinopril",
+  //               dosage: "10mg",
+  //               frequency: "Once daily",
+  //               startDate: "2024-11-10",
+  //               endDate: "Ongoing",
+  //             },
+  //             {
+  //               name: "Metformin",
+  //               dosage: "500mg",
+  //               frequency: "Twice daily",
+  //               startDate: "2024-12-05",
+  //               endDate: "Ongoing",
+  //             },
+  //           ],
+  //           recentActivities: data.recipient.recentActivities || [
+  //             {
+  //               date: "2025-03-28",
+  //               type: "Check-in call",
+  //               notes: "Recipient reported feeling well. No complaints.",
+  //               agent: "Adeola F.",
+  //             },
+  //             {
+  //               date: "2025-03-25",
+  //               type: "Medication delivery",
+  //               notes: "Monthly supply of Lisinopril and Metformin delivered",
+  //               agent: "Pharmacy Partner",
+  //             },
+  //             {
+  //               date: "2025-03-22",
+  //               type: "Nurse Visit",
+  //               notes:
+  //                 "Vitals checked, all within normal range. Recipient advised to increase water intake.",
+  //               agent: "Nurse Chioma B.",
+  //             },
+  //           ],
+  //         });
+  //       } else {
+  //         console.error("Failed to fetch recipient data");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching recipient data:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchRecipientData();
-  }, [username, recipientId]);
+  //   // fetchRecipientData();
+  // }, [username, recipientId]);
 
   if (loading) return <p>Loading...</p>;
-  if (!recipient) return <p>No recipient data available.</p>;
+  if (!recipientId) return <p>No recipient data available.</p>;
 
   return (
     <>
       <Head>
-        <title>Doktasend | {recipient.name}</title>
+        <title>Doktasend | {'recipient?.name'}</title>
       </Head>
 
       <div className="min-h-screen bg-gray-50">
@@ -142,14 +148,14 @@ const RecipientDetailsPage = () => {
               <div className="flex flex-col md:flex-row md:justify-between md:items-center">
                 <div>
                   <CardTitle className="text-xl font-semibold">
-                    {recipient.name}
+                    {recipient?.name}
                   </CardTitle>
                   <p className="text-gray-600">
                     {/* {recipient.age} years • */}
-                    Package: {recipient.plan}
+                    Package: {recipient?.plan}
                   </p>
                   <p className="text-gray-600">
-                    Onboarded: {recipient.onboardDate}
+                    Onboarded: {recipient?.onboardDate}
                   </p>
                 </div>
                 <div className="mt-4 md:mt-0"></div>
@@ -165,11 +171,10 @@ const RecipientDetailsPage = () => {
                       key={tab}
                       variant="ghost"
                       onClick={() => setActiveTab(tab)}
-                      className={`px-6 py-3 text-sm font-medium ${
-                        activeTab === tab
-                          ? "border-b-2 border-blue-500 text-blue-600"
-                          : "text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                      }`}
+                      className={`px-6 py-3 text-sm font-medium ${activeTab === tab
+                        ? "border-b-2 border-blue-500 text-blue-600"
+                        : "text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                        }`}
                     >
                       {tab.charAt(0).toUpperCase() + tab.slice(1)}
                     </Button>
@@ -190,7 +195,7 @@ const RecipientDetailsPage = () => {
                       Upcoming Visits
                     </CardTitle>
                     <CardContent className="space-y-4">
-                      {recipient.upcomingVisits.map((visit, index) => (
+                      {recipient?.upcomingVisits?.map((visit, index) => (
                         <div
                           key={index}
                           className="flex justify-between items-center"
@@ -202,11 +207,10 @@ const RecipientDetailsPage = () => {
                             </p>
                           </div>
                           <span
-                            className={`px-2 py-1 text-xs rounded-full ${
-                              visit.status === "Scheduled"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-yellow-100 text-yellow-800"
-                            }`}
+                            className={`px-2 py-1 text-xs rounded-full ${visit.status === "Scheduled"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-yellow-100 text-yellow-800"
+                              }`}
                           >
                             {visit.status}
                           </span>
@@ -220,8 +224,8 @@ const RecipientDetailsPage = () => {
                     <CardTitle className="text-lg font-medium mb-4">
                       Recent Activities
                     </CardTitle>
-                    <CardContent className="space-y-4">
-                      {recipient.recentActivities
+                    {/* <CardContent className="space-y-4">
+                      {recipient?.recentActivities
                         .slice(0, 3)
                         .map((activity, index) => (
                           <div
@@ -240,7 +244,7 @@ const RecipientDetailsPage = () => {
                       <Button variant="outline" className="w-full mt-2">
                         View All Activities
                       </Button>
-                    </CardContent>
+                    </CardContent> */}
                   </Card>
                 </div>
               </CardContent>
@@ -258,8 +262,8 @@ const RecipientDetailsPage = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4">
-                  {recipient.medications.map((med, index) => (
+                {/* <div className="grid grid-cols-1 gap-4">
+                  {recipient?.medications.map((med, index) => (
                     <Card
                       key={index}
                       className="bg-white border rounded-md p-4 flex flex-col md:flex-row md:justify-between md:items-center"
@@ -285,7 +289,7 @@ const RecipientDetailsPage = () => {
                       </div>
                     </Card>
                   ))}
-                </div>
+                </div> */}
               </CardContent>
             )}
 
@@ -306,8 +310,8 @@ const RecipientDetailsPage = () => {
                   </div>
                 </div>
 
-                <CardContent className="space-y-4">
-                  {recipient.recentActivities.map((activity, index) => (
+                {/* <CardContent className="space-y-4">
+                  {recipient?.recentActivities.map((activity, index) => (
                     <Card
                       key={index}
                       className="bg-white border-l-2 border-blue-500 p-4 rounded-r-md shadow-sm"
@@ -331,7 +335,7 @@ const RecipientDetailsPage = () => {
                   <div className="flex justify-center mt-6">
                     <Button variant="outline">Load More Activities</Button>
                   </div>
-                </CardContent>
+                </CardContent> */}
               </CardContent>
             )}
 

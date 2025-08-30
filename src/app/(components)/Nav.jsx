@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 
 const Nav = () => {
   // const user = await getCurrentUser();
-  const { getSavedUser } = useAuthContext();
+  const { logout, getSavedUser } = useAuthContext();
+  // console.log("getSavedUser()", getSavedUser())
   const user = {}
   const router = useRouter();
   return (
@@ -33,7 +34,7 @@ const Nav = () => {
             className="text-sm font-medium hover:text-primary"
             onClick={() => {
               // You can also make an API call to log out
-              localStorage.removeItem("user");
+              logout()
               // router.push("/auth/login");
             }}
           >

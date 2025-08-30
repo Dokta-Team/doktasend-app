@@ -4,13 +4,14 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 export const AuthContext = createContext();
 const DOKTA_ACCESS_USER = process.env.NEXT_DOKTA_ACCESS_USER
+const DOKTA_ACCESS_TOKEN = process.env.DOKTA_ACCESS_TOKEN
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
     // On load, try to read user from localStorage
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
+        const storedUser = localStorage.getItem(DOKTA_ACCESS_USER);
         if (storedUser) {
             setUser(JSON.parse(storedUser));
         }
@@ -37,7 +38,8 @@ export const AuthProvider = ({ children }) => {
             post('sponsor/logout')
             setUser(null);
             localStorage.removeItem(DOKTA_ACCESS_USER);
-            //  window.location.href = "/auth/login";
+            localStorage.removeItem(DOKTA_ACCESS_TOKEN);
+            window.location.href = "/auth/login";
         } catch (error) {
             alert("Failed to logout. Please try again.");
         }

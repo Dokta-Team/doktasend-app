@@ -1,43 +1,58 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useLayoutEffect, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { User, Calendar, Activity } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { get } from "@/lib/http";
+import OnboardingModal from "./onboardModal";
+import { Spinner } from "../(components)/spinner";
+import { toast } from "sonner"
 
 const SponsorDashboardClient = ({ userName }) => {
   const [recipients, setRecipients] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setloading] = useState(false)
   const router = useRouter();
 
-  useEffect(() => {
-    // recipients
-    // const fetchDashboardData = async () => {
-    //   const response = await fetch("/api/dashboard");
-    //   if (response.ok) {
-    //     const data = await response.json();
-    //     setRecipients(data.recipients);
-    //   } else {
-    //     console.error("Failed to fetch dashboard data");
-    //   }
-    // };
-    // fetchDashboardData();
-    const fetchDashboardData = async () => {
-      const response = await get("sponsor/recipients");
-      // console.log("response", response)
-      if (response && response.success === true) {
-        setRecipients(response.payload)
-      }
-      else {
-        // setIsLoading(false);
-        alert(response?.message || "Something went wrong");
-      }
-    };
+
+  useLayoutEffect(() => {
+
     fetchDashboardData();
   }, []);
 
+  const fetchDashboardData = async () => {
+    try {
+      setloading(true)
+      const response = await get("recipient/sponsor-recipients");
+      if (response && response.success === true) {
+        setRecipients(response.payload)
+        setloading(false)
+      }
+      else {
+        // setIsLoading(false);
+        toast(response?.message || "There was a problem with your request.", {
+          description: "Uh oh! Something went wrong.",
+          action: {
+            label: "Try again",
+            onClick: () => fetchDashboardData(),
+          },
+        })
+        setloading(false)
+      }
+    } catch (error) {
+      toast(error.message, {
+        // description: "Success",
+        action: {
+          label: "Try again",
+          onClick: () => fetchDashboardData(),
+        },
+      })
+    }
+  };
   return (
     <div className="p-6">
+      {loading && <Spinner />}
       {userName && (
         <h2 className="text-2xl font-semibold mb-4">Welcome, {userName}</h2>
       )}{" "}
@@ -98,9 +113,11 @@ const SponsorDashboardClient = ({ userName }) => {
                   <p className="text-sm text-muted-foreground mb-4">
                     You have no active recipients.
                   </p>
-                  <Button onClick={() => router.push("/OnboardPage")}>
+                  {/* <Button onClick={() => router.push("/onboard")}> */}
+                  <Button onClick={() => setShowModal(true)}>
                     Onboard your first recipient
                   </Button>
+                  <OnboardingModal open={showModal} onClose={() => setShowModal(false)} fetchDashboardData={fetchDashboardData} />
                 </div>
               ) : (
                 recipients.map((recipient) => (
@@ -111,7 +128,7 @@ const SponsorDashboardClient = ({ userName }) => {
                     <div className="flex items-center space-x-4">
                       <User className="h-10 w-10 p-2 bg-gray-100 rounded-full" />
                       <div>
-                        <p className="font-medium">{recipient.name}</p>
+                        <p className="font-medium">{recipient.fullName}</p>
                         <p className="text-sm text-muted-foreground">
                           Last check-in: Today
                         </p>
@@ -120,7 +137,7 @@ const SponsorDashboardClient = ({ userName }) => {
                     <Button
                       variant="outline"
                       onClick={() =>
-                        router.push(`/dashboard/${userName}/${recipient._id}`)
+                        router.push(`/dashboard/${recipient._id}`)
                       }
                       className="shadow-md hover:bg-gray-100"
                     >
