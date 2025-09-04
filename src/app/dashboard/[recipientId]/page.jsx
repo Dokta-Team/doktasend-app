@@ -5,10 +5,15 @@ import Head from "next/head";
 import { Card, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuthContext } from "@/context/authContext";
+import { toast } from "sonner"
+import { get } from "@/lib/http";
+import { formatAccountDate } from "@/lib/utils";
+import { Spinner } from "@/app/(components)/spinner";
+
 
 const RecipientDetailsPage = () => {
   const params = useParams();
-  const { getSavedUser } = useAuthContext();
+  const { user } = useAuthContext();
   const { username, recipientId } = params;
   const [recipient, setRecipient] = useState({});
   const [activeTab, setActiveTab] = useState("overview");
@@ -16,105 +21,45 @@ const RecipientDetailsPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const sponsor = getSavedUser()
-    console.log("sponsor", sponsor)
+    getRecipientDetails(recipientId)
   }, [])
-  // useEffect(() => {
-  //   const fetchRecipientData = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const response = await fetch(
-  //         `/api/dashboard/${recipientId}`
-  //       );
-  //       if (response.ok) {
-  //         const data = await response.json();
-  //         setRecipient({
-  //           id: data.recipient._id,
-  //           name: data.recipient.name,
-  //           age: data.recipient.dateOfBirth,
-  //           address: data.recipient.address,
-  //           phone: data.recipient.phone,
-  //           onboardDate: data.recipient.createdAt,
-  //           plan: data.recipient.plan,
-  //           sponsor: data.recipient.sponsor
-  //             ? {
-  //                 name: data.recipient.sponsor.name,
-  //                 location: "Toronto, Canada",
-  //                 relationship: "Son",
-  //               }
-  //             : { name: "Unknown", location: "N/A", relationship: "N/A" },
-  //           upcomingVisits: data.recipient.upcomingVisits || [
-  //             {
-  //               type: "Nurse Visit",
-  //               date: "2025-04-05",
-  //               time: "10:00 AM",
-  //               status: "Scheduled",
-  //             },
-  //             {
-  //               type: "Doctor Consultation",
-  //               date: "2025-04-15",
-  //               time: "2:00 PM",
-  //               status: "Pending Confirmation",
-  //             },
-  //           ],
-  //           medications: data.recipient.medications || [
-  //             {
-  //               name: "Lisinopril",
-  //               dosage: "10mg",
-  //               frequency: "Once daily",
-  //               startDate: "2024-11-10",
-  //               endDate: "Ongoing",
-  //             },
-  //             {
-  //               name: "Metformin",
-  //               dosage: "500mg",
-  //               frequency: "Twice daily",
-  //               startDate: "2024-12-05",
-  //               endDate: "Ongoing",
-  //             },
-  //           ],
-  //           recentActivities: data.recipient.recentActivities || [
-  //             {
-  //               date: "2025-03-28",
-  //               type: "Check-in call",
-  //               notes: "Recipient reported feeling well. No complaints.",
-  //               agent: "Adeola F.",
-  //             },
-  //             {
-  //               date: "2025-03-25",
-  //               type: "Medication delivery",
-  //               notes: "Monthly supply of Lisinopril and Metformin delivered",
-  //               agent: "Pharmacy Partner",
-  //             },
-  //             {
-  //               date: "2025-03-22",
-  //               type: "Nurse Visit",
-  //               notes:
-  //                 "Vitals checked, all within normal range. Recipient advised to increase water intake.",
-  //               agent: "Nurse Chioma B.",
-  //             },
-  //           ],
-  //         });
-  //       } else {
-  //         console.error("Failed to fetch recipient data");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching recipient data:", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
 
-  //   // fetchRecipientData();
-  // }, [username, recipientId]);
+  const getRecipientDetails = async (recipientId) => {
+    try {
+      if (!recipientId) {
+        toast.warning("No recipient id", {
+          description: "Uh oh! Something went wrong.",
+        })
+      }
+      setLoading(true)
+      const response = await get(`recipient/${recipientId}`);
+      if (response && response.success === true) {
+        setRecipient(response.payload)
+        setLoading(false)
+      }
+      else {
+        setLoading(false)
+        toast.warning(response.message, {
+          description: "Uh oh! Something went wrong.",
+        })
+      }
+    } catch (error) {
+      toast.error(error.message || "There was a problem fetching recipient data.", {
+        description: "Uh oh! Something went wrong.",
+      })
+    }
+    finally {
+      setLoading(false)
+    }
+  }
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Spinner/>
   if (!recipientId) return <p>No recipient data available.</p>;
 
   return (
     <>
       <Head>
-        <title>Doktasend | {'recipient?.name'}</title>
+        <title>Doktasend | {recipient?.fullName}</title>
       </Head>
 
       <div className="min-h-screen bg-gray-50">
@@ -148,14 +93,14 @@ const RecipientDetailsPage = () => {
               <div className="flex flex-col md:flex-row md:justify-between md:items-center">
                 <div>
                   <CardTitle className="text-xl font-semibold">
-                    {recipient?.name}
+                    {recipient?.fullName}
                   </CardTitle>
                   <p className="text-gray-600">
                     {/* {recipient.age} years • */}
-                    Package: {recipient?.plan}
+                    Package: {recipient?.sponsor?.plan}
                   </p>
                   <p className="text-gray-600">
-                    Onboarded: {recipient?.onboardDate}
+                    Onboarded: {formatAccountDate(recipient?.createdAt || new Date())}
                   </p>
                 </div>
                 <div className="mt-4 md:mt-0"></div>

@@ -28,42 +28,6 @@ export default function OnboardingModal(props) {
         }));
     };
 
-    // const handleSubmit = async () => {
-    //     if (!recipientId.trim())
-    //         return; toast("Recipient id is missing", {
-    //             description: "Uh oh! Something went wrong.",
-    //         })
-
-    //     setLoading(true);
-    //     try {
-    //         const response = await post('sponsor/recipients', { recipient_id: recipientId })
-    //         console.log("response", response)
-    //         if (response && response.success === true) {
-    //             router.refresh();
-    //             fetchDashboardData()
-    //             onClose();
-    //             setRecipientId("")
-    //         }
-    //         else {
-    //             setLoading(false);
-    //             toast(response?.message || "Something went wrong", {
-    //                 description: "Uh oh! Something went wrong.",
-    //             })
-    //         }
-    //     } catch (error) {
-    //         alert(error.message);
-    //     } finally {
-    // setLoading(false);
-    // setLoading(false);
-    // toast(error?.message || "Error with your request", {
-    //     description: "Uh oh! Something went wrong.",
-    //     action: {
-    //         label: "Try again",
-    //         onClick: () => handleSubmit(),
-    //     },
-    // })
-    //     }
-    // };
 
     const handleSubmit = async () => {
         const { fullName, mobile, address, email } = formData;
@@ -78,7 +42,6 @@ export default function OnboardingModal(props) {
             payload.email = "default@gmail.com"
             if (email.trim()) payload.email = email;
             const response = await post("recipient", payload);
-            console.log("response", response)
             if (response?.success) {
                 router.refresh();
                 fetchDashboardData();

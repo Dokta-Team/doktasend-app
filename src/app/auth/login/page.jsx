@@ -18,6 +18,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { post, setToken } from "@/lib/http";
 import { useAuthContext } from "@/context/authContext";
+import { toast } from "sonner"
 
 export default function Login() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function Login() {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-    const { saveUser } = useAuthContext();
+  const { saveUser, saveUserToken } = useAuthContext();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,26 +49,38 @@ export default function Login() {
       setIsLoading(true);
 
       const response = await post('sponsor/login', formData)
-      // const data = await response.json();
       if (response && response.success === true) {
-        const { accessToken, ...userWithoutToken } = response.payload.sponsor;
-        setToken(accessToken)
-        saveUser(userWithoutToken)
+        const { ...sponsor } = response.payload.sponsor;
+        const { accessToken, } = response.payload;
+        if (sponsor.verified === false) {
+          await post("auth/resend-otp", {
+            email: formData.email.toLowerCase(),
+          });
+          // send a new code here
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 4000);
+          return router.push(`/auth/verify?email=${formData.email}`);
+        }
         if (response.payload.role === 'admin') {
           setIsLoading(false);
-          router.push("/admin");
+          return router.push("/admin");
         }
         else {
+          setToken(accessToken)
+          saveUserToken(accessToken)
+          saveUser(sponsor)
           setIsLoading(false);
-          router.push("/dashboard");
+          return router.push("/dashboard");
         }
       }
       else {
         setIsLoading(false);
-        throw new Error(response?.message || "Login failed");
+        toast.warning(response?.message || "Login failed")
       }
     } catch (error) {
-      setError(error.message);
+      // setError(error.message);
+      toast.error(error?.message)
       setIsLoading(false);
     }
   };

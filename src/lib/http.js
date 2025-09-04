@@ -1,11 +1,23 @@
 import api, { DOKTA_ACCESS_TOKEN } from './axios';
 import { toast } from "sonner";
+const DOKTA_ACCESS_USER = process.env.NEXT_PUBLIC_DOKTA_ACCESS_USER;
+
+export const authEvents = {
+    onAuthFailure: (callback) => {
+        window.addEventListener('auth-failure', callback);
+    },
+    offAuthFailure: (callback) => {
+        window.removeEventListener('auth-failure', callback);
+    },
+    triggerAuthFailure: () => {
+        window.dispatchEvent(new CustomEvent('auth-failure'));
+    }
+};
 
 const handleError = (error) => {
     if (error.response) {
         const status = error.response.status;
         const message = error.response.data?.message || 'An error occurred';
-        console.log("handleError", message)
         switch (status) {
             case 400:
                 // alert(message || 'Bad Request');
@@ -13,11 +25,18 @@ const handleError = (error) => {
                     success: false,
                     message: message,
                 };
-                break;
             case 401:
-                window.location.href = '/auth/login';
+                // window.location.href = '/auth/login';
+                localStorage.removeItem(DOKTA_ACCESS_TOKEN);
+                localStorage.removeItem(DOKTA_ACCESS_USER);
+                authEvents.triggerAuthFailure();
+                return {
+                    success: false,
+                    message: message,
+                };
                 break;
             case 402:
+                window.location.href = '/auth/login';
                 return {
                     success: false,
                     message: message || 'Auth Required',
@@ -40,8 +59,6 @@ const handleError = (error) => {
         }
     }
     else if (error.request) {
-        console.log("Http error", error.status)
-        window.location.href = '/auth/login';
         return {
             success: false,
             message: 'No response from server',

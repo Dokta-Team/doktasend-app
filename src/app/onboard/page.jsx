@@ -41,7 +41,6 @@ const OnboardingForm = () => {
   };
 
   const handleSubmit = async () => {
-    console.log("Form Data:", formData);
     const response = await fetch("/api/recipients", {
       method: "POST",
       body: JSON.stringify({ userData: formData }),

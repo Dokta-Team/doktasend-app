@@ -14,7 +14,6 @@ export default function HomePageRedirect() {
 //   const router = useRouter();
 //   useEffect(() => {
 //     const token = localStorage.getItem(DOKTA_ACCESS_TOKEN|| "DOKTA_ACCESS_TOKEN");
-//     console.log("HomePageRedirect token", token)
 //     if (token) {
 //       router.replace("/dashboard"); // Token exists → redirect to dashboard
 //     } else {

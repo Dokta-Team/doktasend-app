@@ -5,18 +5,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { post } from "@/lib/http";
+import { toast } from "sonner"
 
 export default function RegisterPage() {
 
   const searchParams = useSearchParams();
-  const initialPlan = searchParams.get("plan") || "gold";
+  const initialPlan = searchParams.get("plan") || "Gold";
+  const planFromQuery = initialPlan.charAt(0).toUpperCase() + initialPlan.slice(1).toLowerCase();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     firstName: "",
     lastName: "",
+    address: "",
     mobile: "",
-    plan: initialPlan,
+    countryCode: "+234",
+    plan: planFromQuery,
   });
 
   const [error, setError] = useState("");
@@ -35,111 +40,42 @@ export default function RegisterPage() {
     setVerificationToken(e.target.value);
   };
 
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    // setError("");
+    try {
+      e.preventDefault();
+      setError("");
+      // Validate form
+      if (!formData.email || !formData.password) {
+        setError("Email and password are required");
+        return;
+      }
 
-    // if (
-    //   !formData.fname ||
-    //   !formData.lname ||
-    //   !formData.email ||
-    //   !formData.password
-    // ) {
-    //   setError("All fields are required");
-    //   return;
-    // }
+      setIsLoading(true);
 
-    // if (formData.password !== formData.confirmPassword) {
-    //   setError("Passwords do not match");
-    //   return;
-    // }
+      const response = await post('sponsor', formData)
+      // const data = await response.json();
+      formData.plan = formData.plan.charAt(0).toUpperCase() + formData.plan.slice(1).toLowerCase()
+      if (response && response.success === true) {
+        setIsLoading(false);
+        router.push("/auth/verify?email=formData.email");
+      }
+      else {
+        setIsLoading(false);
+        toast.warning(response?.message || "Login failed")
 
-    // if (formData.password.length < 6) {
-    //   setError("Password must be at least 6 characters");
-    //   return;
-    // }
-
-    // setIsLoading(true);
-
-    // if (currentStep === 1) {
-    //   try {
-    //     // Step 1: Register user
-    //     const registerResponse = await fetch("/api/auth/register", {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify({
-    //         fname: formData.fname,
-    //         lname: formData.lname,
-    //         email: formData.email,
-    //         password: formData.password,
-    //         phone: formData.phone,
-    //       }),
-    //     });
-
-    //     const registerData = await registerResponse.json();
-
-    //     if (!registerResponse.ok) {
-    //       throw new Error(registerData.error || "Registration failed.");
-    //     }
-
-    //     // Step 2: Send verification token
-    //     const tokenRes = await fetch("/api/send-verification-token", {
-    //       method: "POST",
-    //       headers: { "Content-Type": "application/json" },
-    //       body: JSON.stringify({ email: formData.email }),
-    //     });
-
-    //     const tokenData = await tokenRes.json();
-    //     console.log("love", tokenData);
-    //     if (!tokenRes.ok) {
-    //       console.log("lov", tokenRes);
-    //       throw new Error(
-    //         tokenData.error || "Failed to send verification token."
-    //       );
-    //     }
-
-    //     // Move to Step 2 on success
-    //     setCurrentStep(2);
-    //     return; // Prevent further execution of handleSubmit for step 1
-    //   } catch (error) {
-    //     setError(error.message);
-    //   } finally {
-    //     setIsLoading(false);
-    //   }
-    // } else if (currentStep === 2) {
-    //   try {
-    //     const response = await fetch("/api/verify-token", {
-    //       method: "POST",
-    //       headers: { "Content-Type": "application/json" },
-    //       body: JSON.stringify({
-    //         userData: formData,
-    //         token: verificationToken,
-    //       }),
-    //     });
-
-    //     const data = await response.json();
-
-    //     if (!response.ok) {
-    //       throw new Error(data.error || "Invalid verification token.");
-    //     }
-
-    //     setTokenVerified(true);
-    //     router.refresh();
-    //     router.push(`/confirmation?plan=${formData.plan}`);
-    //     return; // Prevent further execution of handleSubmit for step 1
-    //   } catch (error) {
-    //     setError(error.message);
-    //   } finally {
-    //     setIsLoading(false);
-    //   }
-    // }
+      }
+    } catch (error) {
+      setError(error.message);
+      toast.error(error.message)
+      setIsLoading(false);
+    }
   };
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <Card className="w-full max-w-md p-6">
+      <Card className="w-full max-w-md p-6 my-12">
         <CardHeader>
           <CardTitle>Register</CardTitle>
         </CardHeader>
@@ -185,6 +121,17 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="address">Address</Label>
+                  <Input
+                    id="address"
+                    name="address"
+                    type="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <Input
                     id="password"
@@ -218,9 +165,9 @@ export default function RegisterPage() {
                     onChange={handleChange}
                     className="px-3 py-2 border rounded-md bg-gray-100 text-sm text-gray-700 w-full"
                   >
-                    <option value="gold">Gold (Free)</option>
-                    <option value="diamond">Diamond</option>
-                    <option value="platinum">Platinum</option>
+                    <option value="Gold">Gold (Free)</option>
+                    <option value="Diamond">Diamond</option>
+                    <option value="Platinum">Platinum</option>
                   </select>
                 </div>
                 <div className="space-y-2">
@@ -245,12 +192,12 @@ export default function RegisterPage() {
                     <Input
                       id="phone"
                       type="tel"
-                      placeholder="8123456789"
+                      placeholder="Mobile Number"
                       value={formData.mobile}
                       // maxLength={10}
                       onChange={(e) => {
                         const value = e.target.value.replace(/\D/g, "").slice(0, 10);
-                        setFormData({ ...formData, phone: value });
+                        setFormData({ ...formData, mobile: value });
                       }}
                       required
                     />

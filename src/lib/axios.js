@@ -15,7 +15,6 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
-    console.log("INterceptor error", error)
     if (typeof window !== 'undefined' && error.response?.status === 401) {
       window.location.href = '/auth/login'; 
     }
