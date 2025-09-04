@@ -49,6 +49,7 @@ export default function Login() {
       setIsLoading(true);
 
       const response = await post('sponsor/login', formData)
+      console.log("Login response:", response);
       if (response && response.success === true) {
         const { ...sponsor } = response.payload.sponsor;
         const { accessToken, } = response.payload;
@@ -76,7 +77,7 @@ export default function Login() {
       }
       else {
         setIsLoading(false);
-        toast.warning(response?.message || "Login failed")
+       return toast.warning(response?.message || "Login failed")
       }
     } catch (error) {
       // setError(error.message);
