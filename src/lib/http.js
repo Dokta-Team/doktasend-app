@@ -34,14 +34,12 @@ const handleError = (error) => {
                     success: false,
                     message: message,
                 };
-                break;
             case 402:
                 window.location.href = '/auth/login';
                 return {
                     success: false,
                     message: message || 'Auth Required',
                 };
-            // break;
             case 404:
                 toast(message || 'Page not found')
                 break;
@@ -75,17 +73,13 @@ const handleError = (error) => {
 export const get = async (url, params = {}) => {
     try {
         const response = await api.get(url, { params });
-        if (response.statusText !== "OK") {
-            const message = response?.data?.message || 'An error occurred';
-            return {
-                success: false,
-                message: message,
-            };
+        if (response.status < 200 || response.status >= 300) {
+            return { success: false, message: response?.data?.message || 'An error occurred' };
         }
         return {
             success: true,
             message: response.data.message,
-            payload: response.data.payload
+            payload: response.data.payload || null
         };
     } catch (error) {
         return handleError(error);
@@ -95,17 +89,17 @@ export const get = async (url, params = {}) => {
 export const post = async (url, data = {}) => {
     try {
         const response = await api.post(url, data);
-        if (response.statusText !== "OK") {
-            const message = response?.data?.message || 'An error occurred';
-            return {
-                success: false,
-                message: message,
-            };
-        }
+        // if (response.statusText !== "OK") {
+        //     const message = response?.data?.message || 'An error occurred';
+        //     return {
+        //         success: false,
+        //         message: message,
+        //     };
+        // }
         return {
             success: true,
             message: response.data.message,
-            payload: response.data.payload
+            payload: response.data.payload || null
         };
     } catch (error) {
         return handleError(error);
@@ -115,17 +109,17 @@ export const post = async (url, data = {}) => {
 export const put = async (url, data = {}) => {
     try {
         const response = await api.put(url, data);
-        if (response.statusText !== "OK") {
-            const message = response?.data?.message || 'An error occurred';
-            return {
-                success: false,
-                message: message,
-            };
-        }
+        // if (response.statusText !== "OK") {
+        //     const message = response?.data?.message || 'An error occurred';
+        //     return {
+        //         success: false,
+        //         message: message,
+        //     };
+        // }
         return {
             success: true,
             message: response.data.message,
-            payload: response.data.payload
+            payload: response.data.payload || null
         };
     } catch (error) {
         return handleError(error);
@@ -135,13 +129,13 @@ export const put = async (url, data = {}) => {
 export const del = async (url) => {
     try {
         const response = await api.delete(url);
-        if (response.statusText !== "OK") {
-            const message = response?.data?.message || 'An error occurred';
-            return {
-                success: false,
-                message: message,
-            };
-        }
+        // if (response.statusText !== "OK") {
+        //     const message = response?.data?.message || 'An error occurred';
+        //     return {
+        //         success: false,
+        //         message: message,
+        //     };
+        // }
         return {
             success: true,
             message: response.data.message,
