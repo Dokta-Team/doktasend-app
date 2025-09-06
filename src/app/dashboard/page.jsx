@@ -10,7 +10,7 @@ import { Spinner } from "../(components)/spinner";
 import { toast } from "sonner"
 import { useAuthContext } from "@/context/authContext";
 
-const SponsorDashboardClient = ({ userName }) => {
+const SponsorDashboardClient = () => {
   const [recipients, setRecipients] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setloading] = useState(false)
@@ -54,9 +54,10 @@ const SponsorDashboardClient = ({ userName }) => {
   return (
     <div className="p-6">
       {loading && <Spinner />}
-      {userName && (
+      <h2 className="text-2xl font-semibold mb-4">Welcome, {'userName'}</h2>
+      {/* {userName && (
         <h2 className="text-2xl font-semibold mb-4">Welcome, {userName}</h2>
-      )}{" "}
+      )}{" "} */}
       {/* Welcome message */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">

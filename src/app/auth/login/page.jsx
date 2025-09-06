@@ -35,6 +35,57 @@ export default function Login() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // const handleSubmit = async (e) => {
+  //   try {
+  //     e.preventDefault();
+  //     setError("");
+
+  //     // Validate form
+  //     if (!formData.email || !formData.password) {
+  //       setError("Email and password are required");
+  //       return;
+  //     }
+
+  //     setIsLoading(true);
+
+  //     const response = await post('sponsor/login', formData)
+  //     console.log("Login response:", response);
+  //     if (response && response.success === true) {
+  //       const { ...sponsor } = response.payload.sponsor;
+  //       const { accessToken, } = response.payload;
+  //       if (sponsor.verified === false) {
+  //         await post("auth/resend-otp", {
+  //           email: formData.email.toLowerCase(),
+  //         });
+  //         // send a new code here
+  //         setTimeout(() => {
+  //           setIsLoading(false);
+  //         }, 4000);
+  //         return router.push(`/auth/verify?email=${formData.email}`);
+  //       }
+  //       if (response.payload.role === 'admin') {
+  //         setIsLoading(false);
+  //         return router.push("/admin");
+  //       }
+  //       else {
+  //         setToken(accessToken)
+  //         saveUserToken(accessToken)
+  //         saveUser(sponsor)
+  //         setIsLoading(false);
+  //         return router.push("/dashboard");
+  //       }
+  //     }
+  //     else {
+  //       setIsLoading(false);
+  //      return toast.warning(response?.message || "Login failed")
+  //     }
+  //   } catch (error) {
+  //     // setError(error.message);
+  //     toast.error(error?.message)
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
@@ -50,42 +101,47 @@ export default function Login() {
 
       const response = await post('sponsor/login', formData)
       console.log("Login response:", response);
+
       if (response && response.success === true) {
         const { ...sponsor } = response.payload.sponsor;
-        const { accessToken, } = response.payload;
+        const { accessToken } = response.payload;
+
         if (sponsor.verified === false) {
           await post("auth/resend-otp", {
             email: formData.email.toLowerCase(),
           });
-          // send a new code here
-          setTimeout(() => {
-            setIsLoading(false);
-          }, 4000);
-          return router.push(`/auth/verify?email=${formData.email}`);
-        }
-        if (response.payload.role === 'admin') {
+
+          // Navigate first, then stop loading
+          router.push(`/auth/verify?email=${formData.email}`);
           setIsLoading(false);
-          return router.push("/admin");
+          return;
+        }
+
+        if (response.payload.role === 'admin') {
+          router.push("/admin");
+          setIsLoading(false);
+          return;
         }
         else {
-          setToken(accessToken)
-          saveUserToken(accessToken)
-          saveUser(sponsor)
+          setToken(accessToken);
+          saveUserToken(accessToken);
+          saveUser(sponsor);
+
+          // Navigate first, then stop loading
+          router.push("/dashboard");
           setIsLoading(false);
-          return router.push("/dashboard");
+          return;
         }
       }
       else {
         setIsLoading(false);
-       return toast.warning(response?.message || "Login failed")
+        toast.warning(response?.message || "Login failed");
       }
     } catch (error) {
-      // setError(error.message);
-      toast.error(error?.message)
       setIsLoading(false);
+      toast.error(error?.message || "An error occurred during login");
     }
   };
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
       <Card className="w-full max-w-md">
