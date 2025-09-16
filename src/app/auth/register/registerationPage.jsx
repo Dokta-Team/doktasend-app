@@ -153,7 +153,7 @@ export default function RegisterContent() {
               <Input
                 id="confirmPassword"
                 name="confirmPassword"
-                type="confirmPassword"
+                type="password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
