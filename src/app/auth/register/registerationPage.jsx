@@ -96,6 +96,17 @@ export default function RegisterContent() {
                 required
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="address">Address</Label>
+              <Input
+                id="address"
+                name="address"
+                placeholder="123 Main St"
+                value={formData.address}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
