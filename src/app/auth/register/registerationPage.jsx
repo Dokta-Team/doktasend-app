@@ -20,6 +20,7 @@ export default function RegisterContent() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    confirmPassword: "",
     firstName: "",
     lastName: "",
     address: "",
@@ -143,6 +144,17 @@ export default function RegisterContent() {
                 name="password"
                 type="password"
                 value={formData.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="confirmPassword"
+                value={formData.confirmPassword}
                 onChange={handleChange}
                 required
               />
