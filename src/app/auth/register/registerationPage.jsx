@@ -109,6 +109,21 @@ export default function RegisterContent() {
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="mobile">Mobile Number</Label>
+              <Input
+                id="mobile"
+                name="mobile"
+                type="tel"
+                placeholder="1234567890"
+                value={formData.mobile}
+                onChange={handleChange}
+                pattern="\d{10,}"
+                title="Mobile number must be at least 10 digits"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
