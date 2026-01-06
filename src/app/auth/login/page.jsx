@@ -104,7 +104,6 @@ export default function Login() {
       if (response && response.success === true) {
         const { ...sponsor } = response.payload.sponsor;
         const { accessToken } = response.payload;
-
         if (sponsor.verified === false) {
           await post("auth/resend-otp", {
             email: formData.email.toLowerCase(),

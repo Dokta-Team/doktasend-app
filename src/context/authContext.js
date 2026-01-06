@@ -43,7 +43,6 @@ export const AuthProvider = ({ children }) => {
 
     const handleLogout = async (message = '') => {
         if (message) {
-           
             alert(message);
         }
 

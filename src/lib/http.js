@@ -1,6 +1,6 @@
 import api, { DOKTA_ACCESS_TOKEN } from './axios';
 import { toast } from "sonner";
-const DOKTA_ACCESS_USER = process.env.NEXT_PUBLIC_DOKTA_ACCESS_USER;
+const DOKTA_ACCESS_USER = process.env.NEXT_PUBLIC_DOKTA_ACCESS_USER || 'DOKTA_ACCESS_USER';
 
 export const authEvents = {
     onAuthFailure: (callback) => {
