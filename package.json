@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack -p 3110",
     "build": "next build",
     "start": "next start -p 3110",
-    "lint": "next lint"
+    "lint": "next lint",
+    "pm2": "pm2 start npm --name doktasend-app -- run start"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.3",

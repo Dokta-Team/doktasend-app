@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 
 export function middleware(req) {
     const token = req.cookies.get('DOKTA_ACCESS_TOKEN')?.value;
+    console.log("Middlewqare token: ", token)
     const isProtectedRoute = req.nextUrl.pathname.startsWith('/dashboard') || req.nextUrl.pathname.startsWith('/admin');
     if (isProtectedRoute && !token) {
         return NextResponse.redirect(new URL('/auth/login', req.url));
