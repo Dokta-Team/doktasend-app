@@ -3,7 +3,7 @@
 'use client';
 export const dynamic = 'force-dynamic'; // Prevent Next.js from prerendering this page
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -25,16 +25,66 @@ export default function RegisterContent() {
     lastName: "",
     address: "",
     mobile: "",
+    country: "Nigeria",
     countryCode: "+234",
     plan: planFromQuery,
   });
 
   const [error, setError] = useState("");
   const router = useRouter();
+  const [countries, setCountries] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    getAllCountries()
+
+  }, [])
+
+
+  // async function getAllCountries() {
+  //   try {
+  //     const response = await fetch('https://www.apicountries.com/countries', {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         "Allow-Control-Allow-Origin": "*",
+  //       }
+  //     });
+  //     const data = await response.json();
+  //     if (response.ok) {
+  //       setCountries(data);
+  //       console.log("Countries data:", data)
+  //     } else {
+  //       throw new Error(data.message || 'Failed to fetch countries');
+  //     }
+  //   } catch (error) {
+  //     toast.error("Failed to load countries")
+  //   }
+  // }
+
+  async function getAllCountries() {
+    try {
+      const response = await fetch('/api/countries');
+      const data = await response.json();
+      setCountries(data);
+    } catch (error) {
+      toast.error("Failed to load countries");
+    }
+  }
+
+
+  // const handleChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    if (e.target.name === "country") {
+      const selectedCountry = countries.find(
+        (c) => c.name === e.target.value
+      );
+      setFormData({ ...formData, country: e.target.value , countryCode: selectedCountry?.callingCodes?.[0] ? `+${selectedCountry.callingCodes[0]}`: "+234" });
+    } else {
+     setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -104,6 +154,37 @@ export default function RegisterContent() {
                 name="address"
                 placeholder="123 Main St"
                 value={formData.address}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+
+            <div className="space-y-2">
+              <Label htmlFor="country">Country</Label>
+
+              <select
+                id="country"
+                name="country"
+                value={formData.country}
+                onChange={handleChange}
+                className="px-3 py-2 border rounded-md text-sm w-full"
+              >
+                {countries.map((country) => (
+                  <option key={country.name} value={country.name}>
+                    {country.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="countryCode">Country Code</Label>
+              <Input
+                id="countryCode"
+                name="countryCode"
+                type="tel"
+                placeholder="+234"
+                value={formData.countryCode}
                 onChange={handleChange}
                 required
               />

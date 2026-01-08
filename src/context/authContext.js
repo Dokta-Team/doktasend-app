@@ -6,7 +6,7 @@ import { authEvents, post } from "@/lib/http";
 const AuthContext = createContext();
 
 const DOKTA_ACCESS_USER = process.env.NEXT_PUBLIC_DOKTA_ACCESS_USER;
-const DOKTA_ACCESS_TOKEN = process.env.NEXT_PUBLIC_DOKTA_ACCESS_TOKEN;
+const DOKTA_ACCESS_TOKEN = process.env.NEXT_PUBLIC_DOKTA_ACCESS_TOKEN || "DOKTA_ACCESS_USER";
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
