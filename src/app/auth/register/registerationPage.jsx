@@ -3,7 +3,7 @@
 'use client';
 export const dynamic = 'force-dynamic'; // Prevent Next.js from prerendering this page
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { post } from "@/lib/http";
 import { toast } from "sonner";
+import { Spinner } from "@/app/(components)/spinner";
 
 export default function RegisterContent() {
   const searchParams = useSearchParams();
@@ -34,40 +35,24 @@ export default function RegisterContent() {
   const router = useRouter();
   const [countries, setCountries] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingCountries, setLoadingCountries] = useState(true);
 
   useEffect(() => {
     getAllCountries()
-
   }, [])
 
 
-  // async function getAllCountries() {
-  //   try {
-  //     const response = await fetch('https://www.apicountries.com/countries', {
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         "Allow-Control-Allow-Origin": "*",
-  //       }
-  //     });
-  //     const data = await response.json();
-  //     if (response.ok) {
-  //       setCountries(data);
-  //       console.log("Countries data:", data)
-  //     } else {
-  //       throw new Error(data.message || 'Failed to fetch countries');
-  //     }
-  //   } catch (error) {
-  //     toast.error("Failed to load countries")
-  //   }
-  // }
 
   async function getAllCountries() {
     try {
+       setLoadingCountries(true);
       const response = await fetch('/api/countries');
       const data = await response.json();
       setCountries(data);
+      setLoadingCountries(false);
     } catch (error) {
       toast.error("Failed to load countries");
+      setLoadingCountries(false);
     }
   }
 
@@ -81,9 +66,9 @@ export default function RegisterContent() {
       const selectedCountry = countries.find(
         (c) => c.name === e.target.value
       );
-      setFormData({ ...formData, country: e.target.value , countryCode: selectedCountry?.callingCodes?.[0] ? `+${selectedCountry.callingCodes[0]}`: "+234" });
+      setFormData({ ...formData, country: e.target.value, countryCode: selectedCountry?.callingCodes?.[0] ? `+${selectedCountry.callingCodes[0]}` : "+234" });
     } else {
-     setFormData({ ...formData, [e.target.name]: e.target.value });
+      setFormData({ ...formData, [e.target.name]: e.target.value });
     }
   };
 
@@ -117,161 +102,164 @@ export default function RegisterContent() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <Card className="w-full max-w-md p-6 my-12">
-        <CardHeader>
-          <CardTitle>Register</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
-              <Input
-                id="firstName"
-                name="firstName"
-                placeholder="John"
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-              />
-            </div>
+    <Fragment>
+     {loadingCountries && <Spinner />}
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <Card className="w-full max-w-md p-6 my-12">
+          <CardHeader>
+            <CardTitle>Register</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  id="firstName"
+                  name="firstName"
+                  placeholder="John"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
-              <Input
-                id="lastName"
-                name="lastName"
-                placeholder="Doe"
-                value={formData.lastName}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="address">Address</Label>
-              <Input
-                id="address"
-                name="address"
-                placeholder="123 Main St"
-                value={formData.address}
-                onChange={handleChange}
-                required
-              />
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  name="lastName"
+                  placeholder="Doe"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="address">Address</Label>
+                <Input
+                  id="address"
+                  name="address"
+                  placeholder="123 Main St"
+                  value={formData.address}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
 
-            <div className="space-y-2">
-              <Label htmlFor="country">Country</Label>
+              <div className="space-y-2">
+                <Label htmlFor="country">Country</Label>
 
-              <select
-                id="country"
-                name="country"
-                value={formData.country}
-                onChange={handleChange}
-                className="px-3 py-2 border rounded-md text-sm w-full"
-              >
-                {countries.map((country) => (
-                  <option key={country.name} value={country.name}>
-                    {country.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="countryCode">Country Code</Label>
-              <Input
-                id="countryCode"
-                name="countryCode"
-                type="tel"
-                placeholder="+234"
-                value={formData.countryCode}
-                onChange={handleChange}
-                required
-              />
-            </div>
+                <select
+                  id="country"
+                  name="country"
+                  value={formData.country}
+                  onChange={handleChange}
+                  className="px-3 py-2 border rounded-md text-sm w-full"
+                >
+                  {countries.map((country) => (
+                    <option key={country.name} value={country.name}>
+                      {country.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="countryCode">Country Code</Label>
+                <Input
+                  id="countryCode"
+                  name="countryCode"
+                  type="tel"
+                  placeholder="+234"
+                  value={formData.countryCode}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="mobile">Mobile Number</Label>
-              <Input
-                id="mobile"
-                name="mobile"
-                type="tel"
-                placeholder="1234567890"
-                value={formData.mobile}
-                onChange={handleChange}
-                pattern="\d{10,}"
-                title="Mobile number must be at least 10 digits"
-                required
-              />
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="mobile">Mobile Number</Label>
+                <Input
+                  id="mobile"
+                  name="mobile"
+                  type="tel"
+                  placeholder="1234567890"
+                  value={formData.mobile}
+                  onChange={handleChange}
+                  pattern="\d{10,}"
+                  title="Mobile number must be at least 10 digits"
+                  required
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="john@example.com"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="john@example.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-              />
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-            {/* Plan Dropdown */}
-            <div className="space-y-2">
-              <Label htmlFor="plan">Select Plan</Label>
-              <select
-                id="plan"
-                name="plan"
-                value={formData.plan}
-                onChange={handleChange}
-                className="px-3 py-2 border rounded-md bg-gray-100 text-sm w-full"
-              >
-                <option value="Gold">Gold (Free)</option>
-                <option value="Diamond">Diamond</option>
-                <option value="Platinum">Platinum</option>
-              </select>
-            </div>
+              {/* Plan Dropdown */}
+              <div className="space-y-2">
+                <Label htmlFor="plan">Select Plan</Label>
+                <select
+                  id="plan"
+                  name="plan"
+                  value={formData.plan}
+                  onChange={handleChange}
+                  className="px-3 py-2 border rounded-md bg-gray-100 text-sm w-full"
+                >
+                  <option value="Gold">Gold (Free)</option>
+                  <option value="Diamond">Diamond</option>
+                  <option value="Platinum">Platinum</option>
+                </select>
+              </div>
 
-            {error && <div className="text-red-500">{error}</div>}
+              {error && <div className="text-red-500">{error}</div>}
 
-            <Button type="submit" className="w-full">
-              {isLoading ? "Sending Token..." : "Send Verification Token"}
-            </Button>
+              <Button type="submit" className="w-full">
+                {isLoading ? "Sending Token..." : "Send Verification Token"}
+              </Button>
 
-            <div className="text-center text-sm text-gray-500 mt-4">
-              Already have an account?{" "}
-              <a href="/api/auth/signin" className="text-primary hover:underline">
-                Sign in
-              </a>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+              <div className="text-center text-sm text-gray-500 mt-4">
+                Already have an account?{" "}
+                <a href="/api/auth/signin" className="text-primary hover:underline">
+                  Sign in
+                </a>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </Fragment>
   );
 }
