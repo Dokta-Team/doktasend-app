@@ -45,7 +45,6 @@ export default function RegisterContent() {
 
   async function getAllCountries() {
     try {
-       setLoadingCountries(true);
       const response = await fetch('/api/countries');
       const data = await response.json();
       setCountries(data);
