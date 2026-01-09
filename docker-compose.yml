@@ -1,6 +1,6 @@
-name: doktasend
+name: doktasend-frontend
 services:
-  doktasend-app:
+  doktasend-frontend:
     build:
       context: .
       dockerfile: Dockerfile
