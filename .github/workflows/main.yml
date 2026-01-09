@@ -1,0 +1,89 @@
+name: DoktaSend App CI/CD
+
+on:
+  push:
+    branches:
+      - main     # adjust if you want other branches too
+
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: dokta-team/doktasend-app
+  IMAGE_GATEWAY: ghcr.io/dolaposokoya/movango-gateway
+  IMAGE_SERVICE: ghcr.io/dolaposokoya/movango-service
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Log in to GHCR
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      # 3. Build & Push Docker image (versioned + latest)
+      - name: Build and push Docker image
+        run: |
+          API_VERSION=${GITHUB_REF_NAME//\//-}
+          BRANCH_NAME=${GITHUB_REF##*/}
+          SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+          VERSION_TAG="${BRANCH_NAME}-${SHORT_SHA}"
+          echo "Building version tag: $VERSION_TAG"
+
+          docker build -t ghcr.io/${{ env.IMAGE_NAME }}:$VERSION_TAG \
+             -t ghcr.io/${{ env.IMAGE_NAME }}:latest .
+
+          docker push ghcr.io/${{ env.IMAGE_NAME }}:$VERSION_TAG
+          docker push ghcr.io/${{ env.IMAGE_NAME }}:latest
+
+      # 4. Setup SSH for server deployment
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # 5. Deploy latest image on server
+
+      - name: Deploy to the VPS Server
+        run: |
+          API_VERSION=${GITHUB_REF_NAME//\//-}
+          ssh -o StrictHostKeyChecking=accept-new ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
+            set -e
+            cd apps/frontend/doktasend-app
+
+            echo "Pulling latest code 📥⬇️ ....."
+            git pull origin main
+
+            echo "Logging in to GHCR 🔑📦 ...."
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+
+            echo "🚀 Starting zero-downtime deployment..."
+
+            echo "👉 Pulling latest images..."
+            # docker compose --env-file .env.docker pull
+            docker compose --env-file .env.local pull doktasend-app
+
+            echo "🔄 Restarting only doktasend-app image..."
+            # docker compose --env-file .env.docker up -d --force-recreate
+            # docker compose --env-file .env.docker up -d --no-deps --force-recreate doktasend-app
+            docker compose --env-file .env.local up -d --no-deps --force-recreate --remove-orphans doktasend-app
+
+            echo "✅ Deployment completed successfully!"
+            echo "📊 Checking service status..."
+            # docker compose -f docker-compose.yml --env-file .env.local ps
+            docker compose --env-file .env.local ps
+
+            echo "🧹 Cleaning up old images..."
+            docker image prune -f --filter "dangling=true"
+
+          EOF
+
+
