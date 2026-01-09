@@ -3,11 +3,12 @@ FROM node:20-alpine
 WORKDIR /usr/src/apps/frontend
 
 COPY package*.json ./
-COPY .env.local ./
 
 RUN npm install
 
 COPY . .
+
+RUN npm run build
 
 ENV NODE_ENV=production
 
