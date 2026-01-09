@@ -1,5 +1,8 @@
 services:
   doktasend-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: ghcr.io/dokta-team/doktasend-app:latest
     container_name: doktasend-app
     ports:
