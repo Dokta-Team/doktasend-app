@@ -61,10 +61,14 @@ jobs:
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
             echo "🚀 Updating doktasend-app..."
-            docker compose --env-file .env down --remove-orphans
-            docker compose --env-file .env pull doktasend-app
-            docker compose --env-file .env up -d --no-deps --force-recreate --remove-orphans doktasend-app
-            docker ps
+            # docker compose --env-file .env down --remove-orphans
+            # docker compose --env-file .env pull doktasend-app
+            docker compose pull doktasend-app
+
+            docker compose down --remove-orphans doktasend-app 2>/dev/null || true
+
+            docker compose --env-file .env.local up -d --no-deps --force-recreate --remove-orphans doktasend-app
+            docker compose ps
 
             echo "🧹 Cleaning up old images..."
             docker image prune -f --filter "dangling=true"
