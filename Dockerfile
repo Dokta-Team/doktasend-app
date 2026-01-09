@@ -9,7 +9,7 @@ RUN npm run build
 # Stage 2: Production
 FROM node:20-alpine
 WORKDIR /usr/src/apps/frontend
-COPY --from=builder /usr/src/apps/frontend/dist ./dist
+COPY --from=builder /usr/src/apps/frontend/.next ./.next
 COPY --from=builder /usr/src/apps/frontend/package*.json ./
 RUN npm install --production
 EXPOSE 3110
