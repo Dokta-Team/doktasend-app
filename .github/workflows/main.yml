@@ -55,7 +55,7 @@ jobs:
             cd apps/frontend/doktasend-app
 
             echo "Pulling latest code 📥⬇️ ....."
-            git pull origin main
+            # git pull origin main
 
             echo "Logging in to GHCR 🔑📦 ...."
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ secrets.GHCR_USERNAME }} --password-stdin
@@ -72,7 +72,6 @@ jobs:
             docker compose pull doktasend-app
 
             echo "5. Starting container..."
-            # Use .env OR .env.local, but BE CONSISTENT
             docker compose --env-file .env.local up -d --force-recreate doktasend-app
 
             # docker compose --env-file .env.local up  -d --no-deps --force-recreate --remove-orphans doktasend-app
