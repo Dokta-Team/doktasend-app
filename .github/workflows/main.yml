@@ -62,9 +62,12 @@ jobs:
 
             echo "🚀 Updating doktasend-app..."
             docker compose --env-file .env down --remove-orphans
+
+            docker rmi ghcr.io/dokta-team/doktasend-app:latest 2>/dev/null || true
+
             docker compose --env-file .env pull doktasend-app
 
-            docker compose down --remove-orphans doktasend-app 2>/dev/null || true
+            # docker compose down --remove-orphans doktasend-app 2>/dev/null || true
 
             docker compose --env-file .env.local up -d --no-deps --force-recreate --remove-orphans doktasend-app
             docker compose ps
