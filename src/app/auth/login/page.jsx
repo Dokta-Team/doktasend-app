@@ -35,6 +35,9 @@ export default function Login() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+
+  const baseURL = process.env.NEXT_PUBLIC_API_URL;
+  console.log("API Base URL:", baseURL);
   // const handleSubmit = async (e) => {
   //   try {
   //     e.preventDefault();
