@@ -62,14 +62,25 @@ jobs:
 
             echo "🚀 Updating doktasend-app..."
             echo "2. Cleaning old container..."
-            docker compose down --remove-orphans doktasend-app 2>/dev/null || true
+            # docker compose down --remove-orphans doktasend-app 2>/dev/null || true
+            docker stop doktasend-app 2>/dev/null || true
+            docker rm doktasend-app 2>/dev/null || true
 
-            echo "3. Removing old image..."
-            docker rmi ghcr.io/dokta-team/doktasend-app:latest 2>/dev/null || true
+            # echo "3. Removing old image..."
+            # docker rmi ghcr.io/dokta-team/doktasend-app:latest 2>/dev/null || true
+            echo "3. Pulling specific version: $VERSION_TAG..."
+            docker pull ghcr.io/dokta-team/doktasend-app:$VERSION_TAG
             
-            echo "4. Pulling fresh image..."
+            # echo "4. Pulling fresh image..."
             # docker compose --env-file .env.local pull doktasend-app
-            docker compose pull doktasend-app
+            # docker compose pull doktasend-app
+            echo "4. Starting container with .env.local..."
+            docker run -d \
+              --name doktasend-app \
+              --restart unless-stopped \
+              -p 3110:3110 \
+              --env-file .env.local \
+              ghcr.io/dokta-team/doktasend-app:$VERSION_TAG
 
             echo "5. Starting container..."
             docker compose --env-file .env.local up -d --force-recreate doktasend-app
