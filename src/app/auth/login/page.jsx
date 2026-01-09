@@ -36,7 +36,8 @@ export default function Login() {
   };
 
 
-  const baseURL = process.env.NEXT_PUBLIC_API_URL1;
+  const baseURL = process.env.NEXT_PUBLIC_API_URL;
+  console.log("API Base URL", "baseURL");
   console.log("API Base URL: 1d2", baseURL);
   // const handleSubmit = async (e) => {
   //   try {

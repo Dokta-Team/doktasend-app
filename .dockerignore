@@ -1,7 +1,7 @@
 node_modules
 dist
 .dockerignore
-Dockerfile
+# Dockerfile
 doktasend.app
 
 # Logs
