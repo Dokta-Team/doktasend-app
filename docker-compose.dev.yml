@@ -1,7 +1,11 @@
 name: doktasend-app
 services:
-  doktasend-app:
+  doktasend-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: ghcr.io/dokta-team/doktasend-app:latest
+    container_name: doktasend-app
     ports:
       - "3110:3110"  # Map port 3110 of the container to port 3110 on the host
     env_file:

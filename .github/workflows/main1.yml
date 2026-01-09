@@ -3,7 +3,7 @@ name: DoktaSend App CI/CD
 on:
   push:
     branches:
-      - main     # adjust if you want other branches too
+      - main1     # adjust if you want other branches too
 
 
 env:
@@ -63,21 +63,15 @@ jobs:
             echo "🚀 Starting zero-downtime deployment..."
 
             echo "👉 Pulling latest images..."
-            # docker compose --env-file .env.local pull doktasend-app
+            docker compose --env-file .env.local pull doktasend-app
 
             echo "🔄 Restarting only doktasend-app image..."
-            # docker compose --env-file .env.local up -d --no-deps --force-recreate --remove-orphans doktasend-app
+            docker compose --env-file .env.local up -d --no-deps --force-recreate --remove-orphans doktasend-app
 
             echo "✅ Deployment completed successfully!"
             echo "📊 Checking service status..."
             # docker compose -f docker-compose.yml --env-file .env.local ps
             # docker compose --env-file .env.local ps
-
-
-            echo "🚀 Updating doktasend-app..."
-            docker compose --env-file .env.local down --remove-orphans
-            docker compose --env-file .env.local pull doktasend-app
-            docker compose --env-file .env.local up -d doktasend-app
             docker ps
 
             echo "🧹 Cleaning up old images..."
