@@ -10,6 +10,7 @@ RUN npm run build
 FROM node:20-alpine
 WORKDIR /usr/src/apps/frontend
 COPY --from=builder /usr/src/apps/frontend/.next ./.next
+COPY --from=builder /usr/src/apps/frontend/public ./public
 COPY --from=builder /usr/src/apps/frontend/package*.json ./
 RUN npm install --production
 EXPOSE 3110
