@@ -8,7 +8,7 @@ services:
     ports:
       - "3110:3110"  # Map port 3110 of the container to port 3110 on the host
     env_file:
-      - .env
+      - .env.local
     networks:
       - doktasend_network
     environment:
