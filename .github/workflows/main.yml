@@ -41,6 +41,9 @@ jobs:
           docker push ghcr.io/${{ env.IMAGE_NAME }}:$VERSION_TAG
           docker push ghcr.io/${{ env.IMAGE_NAME }}:latest
 
+          echo "VERSION_TAG=$VERSION_TAG" >> $GITHUB_ENV
+          echo "IMAGE_FULL_TAG=ghcr.io/${{ env.IMAGE_NAME }}:$VERSION_TAG" >> $GITHUB_ENV
+
       # 4. Setup SSH for server deployment
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.3
@@ -68,8 +71,8 @@ jobs:
 
             # echo "3. Removing old image..."
             # docker rmi ghcr.io/dokta-team/doktasend-app:latest 2>/dev/null || true
-            echo "3. Pulling specific version: $VERSION_TAG..."
-            docker pull ghcr.io/dokta-team/doktasend-app:$VERSION_TAG
+            echo "3. Pulling specific version: ${{ env.VERSION_TAG }}..."
+            docker pull ghcr.io/dokta-team/doktasend-app:${{ env.VERSION_TAG }}
             
             # echo "4. Pulling fresh image..."
             # docker compose --env-file .env.local pull doktasend-app
@@ -80,7 +83,7 @@ jobs:
               --restart unless-stopped \
               -p 3110:3110 \
               --env-file .env.local \
-              ghcr.io/dokta-team/doktasend-app:$VERSION_TAG
+              ghcr.io/dokta-team/doktasend-app:${{ env.VERSION_TAG }}
 
             # echo "5. Starting container..."
             # docker compose --env-file .env.local up -d --force-recreate doktasend-app
