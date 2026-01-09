@@ -61,15 +61,25 @@ jobs:
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
             echo "🚀 Updating doktasend-app..."
-            docker compose --env-file .env down --remove-orphans
+            echo "2. Cleaning old container..."
+            docker compose down --remove-orphans doktasend-app 2>/dev/null || true
 
+            echo "3. Removing old image..."
             docker rmi ghcr.io/dokta-team/doktasend-app:latest 2>/dev/null || true
+            
+            echo "4. Pulling fresh image..."
+            # docker compose --env-file .env.local pull doktasend-app
+            docker compose pull doktasend-app
 
-            docker compose --env-file .env pull doktasend-app
+            echo "5. Starting container..."
+            # Use .env OR .env.local, but BE CONSISTENT
+            docker compose --env-file .env.local up -d --force-recreate doktasend-app
 
-            # docker compose down --remove-orphans doktasend-app 2>/dev/null || true
-
-            docker compose --env-file .env.local up -d --no-deps --force-recreate --remove-orphans doktasend-app
+            # docker compose --env-file .env.local up  -d --no-deps --force-recreate --remove-orphans doktasend-app
+            echo "6. Verifying..."
+            sleep 5  # Wait for container to start
+            
+            echo "Container status:"
             docker compose ps
 
             echo "🧹 Cleaning up old images..."
