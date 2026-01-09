@@ -69,8 +69,8 @@ jobs:
             docker compose --env-file .env.local pull doktasend-app
 
             echo "🔄 Restarting only doktasend-app image..."
-            # docker compose --env-file .env.docker up -d --force-recreate
-            # docker compose --env-file .env.docker up -d --no-deps --force-recreate doktasend-app
+            # docker compose --env-file .env.local up -d --force-recreate
+            # docker compose --env-file .env.local up -d --no-deps --force-recreate doktasend-app
             docker compose --env-file .env.local up -d --no-deps --force-recreate --remove-orphans doktasend-app
 
             echo "✅ Deployment completed successfully!"
