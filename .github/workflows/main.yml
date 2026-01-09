@@ -62,7 +62,6 @@ jobs:
 
             echo "🚀 Updating doktasend-app..."
             # docker compose --env-file .env down --remove-orphans
-            # docker compose --env-file .env pull doktasend-app
             docker compose --env-file .env pull doktasend-app
 
             docker compose down --remove-orphans doktasend-app 2>/dev/null || true
