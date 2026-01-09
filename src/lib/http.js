@@ -89,6 +89,7 @@ export const get = async (url, params = {}) => {
 export const post = async (url, data = {}) => {
     try {
         const response = await api.post(url, data);
+        console.log("process.env")
         // if (response.statusText !== "OK") {
         //     const message = response?.data?.message || 'An error occurred';
         //     return {
