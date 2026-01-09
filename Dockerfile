@@ -14,4 +14,4 @@ COPY --from=builder /usr/src/apps/frontend/public ./public
 COPY --from=builder /usr/src/apps/frontend/package*.json ./
 RUN npm install --production
 EXPOSE 3110
-CMD ["npm", "run", "start"]
+CMD ["npm", "start"]
