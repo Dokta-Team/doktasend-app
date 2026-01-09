@@ -9,6 +9,7 @@ const api = axios.create({
 
 export const DOKTA_ACCESS_TOKEN = 'DOKTA_ACCESS_TOKEN'
 
+
 // api.interceptors.request.use(
 //   (config) => {
 //     config.headers.Accept = `application/json`;
