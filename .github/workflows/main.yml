@@ -60,20 +60,6 @@ jobs:
             echo "Logging in to GHCR 🔑📦 ...."
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
-            echo "🚀 Starting zero-downtime deployment..."
-
-            echo "👉 Pulling latest images..."
-            # docker compose --env-file .env.local pull doktasend-app
-
-            echo "🔄 Restarting only doktasend-app image..."
-            # docker compose --env-file .env.local up -d --no-deps --force-recreate --remove-orphans doktasend-app
-
-            echo "✅ Deployment completed successfully!"
-            echo "📊 Checking service status..."
-            # docker compose -f docker-compose.yml --env-file .env.local ps
-            # docker compose --env-file .env.local ps
-
-
             echo "🚀 Updating doktasend-app..."
             docker compose --env-file .env.local down --remove-orphans
             docker compose --env-file .env.local pull doktasend-app
