@@ -13,4 +13,4 @@ COPY --from=builder /usr/src/apps/frontend/.next ./.next
 COPY --from=builder /usr/src/apps/frontend/package*.json ./
 RUN npm install --production
 EXPOSE 3110
-CMD ["node", "run", "start"]
+CMD ["npm", "run", "start"]
