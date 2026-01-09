@@ -82,8 +82,8 @@ jobs:
               --env-file .env.local \
               ghcr.io/dokta-team/doktasend-app:$VERSION_TAG
 
-            echo "5. Starting container..."
-            docker compose --env-file .env.local up -d --force-recreate doktasend-app
+            # echo "5. Starting container..."
+            # docker compose --env-file .env.local up -d --force-recreate doktasend-app
 
             # docker compose --env-file .env.local up  -d --no-deps --force-recreate --remove-orphans doktasend-app
             echo "6. Verifying..."
