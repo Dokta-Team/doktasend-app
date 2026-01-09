@@ -8,8 +8,7 @@
     "start": "next start -p 3110",
     "lint": "next lint",
     "pm2": "pm2 start npm --name doktasend-app -- run start",
-    "docker:build1": "docker-compose -p doktasend-app up --build -d",
-    "docker:build": "API_VERSION=1.0.0 docker-compose.dev -p doktasend-app up --build -d",
+    "docker:build": "docker-compose -p doktasend-app up --build -d",
     "docker:down": "docker-compose -p doktasend-app down",
     "pm2:reload": "pm2 reload doktasend-app"
   },
