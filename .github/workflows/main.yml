@@ -38,7 +38,7 @@ jobs:
              -t ghcr.io/${{ env.IMAGE_NAME }}:latest .
 
           docker push ghcr.io/${{ env.IMAGE_NAME }}:$VERSION_TAG
-          docker push ghcr.io/${{ env.IMAGE_NAME }}:latest
+          # docker push ghcr.io/${{ env.IMAGE_NAME }}:latest
 
           # Save VERSION_TAG for deployment
           echo "VERSION_TAG=$VERSION_TAG" >> $GITHUB_ENV
@@ -58,6 +58,8 @@ jobs:
           ssh -o StrictHostKeyChecking=accept-new ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
             cd apps/frontend/doktasend-app
 
+            export VERSION_TAG=${{ env.VERSION_TAG }}
+        
             echo "=== DEPLOYING VERSION: ${{ env.VERSION_TAG }} ==="
 
             echo "Logging in to GHCR 🔑📦 ...."
