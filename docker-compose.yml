@@ -1,7 +1,7 @@
 name: doktasend-frontend
 services:
   doktasend-app:
-    image: ghcr.io/dokta-team/doktasend-app:${VERSION_TAG}
+    image: ghcr.io/dokta-team/doktasend-app:${API_VERSION}
     # container_name: doktasend-app
     ports:
       - "3110:3110"  # Map port 3110 of the container to port 3110 on the host

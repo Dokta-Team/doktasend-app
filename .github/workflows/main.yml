@@ -34,15 +34,15 @@ jobs:
           VERSION_TAG="${BRANCH_NAME}-${SHORT_SHA}"
           echo "Building version tag: $VERSION_TAG"
 
-          docker build --no-cache -t ghcr.io/${{ env.IMAGE_NAME }}:$VERSION_TAG \
+          docker build --no-cache -t ghcr.io/${{ env.IMAGE_NAME }}:1.0.1 \
              -t ghcr.io/${{ env.IMAGE_NAME }}:latest .
 
-          docker push ghcr.io/${{ env.IMAGE_NAME }}:$VERSION_TAG
+          docker push ghcr.io/${{ env.IMAGE_NAME }}:1.0.1
           # docker push ghcr.io/${{ env.IMAGE_NAME }}:latest
 
           # Save VERSION_TAG for deployment
           echo "VERSION_TAG=$VERSION_TAG" >> $GITHUB_ENV
-          echo "IMAGE_FULL_TAG=ghcr.io/${{ env.IMAGE_NAME }}:$VERSION_TAG" >> $GITHUB_ENV
+          echo "IMAGE_FULL_TAG=ghcr.io/${{ env.IMAGE_NAME }}:1.0.1" >> $GITHUB_ENV
 
           
 
@@ -65,14 +65,14 @@ jobs:
             echo "Logging in to GHCR 🔑📦 ...."
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
-            VERSION_TAG=${{ env.VERSION_TAG }} docker compose --env-file .env.local down --remove-orphans
+            docker compose --env-file .env.local down --remove-orphans
             # Pull the latest image for doktasend-app
-            VERSION_TAG=${{ env.VERSION_TAG }} docker compose --env-file .env.local pull
+            docker compose --env-file .env.local pull doktasend-app
 
             # Recreate only the frontend container and remove orphans
             # VERSION_TAG=${{ env.VERSION_TAG }} docker compose --env-file .env.local up -d \
             #   --no-deps --force-recreate --remove-orphans doktasend-app
-            VERSION_TAG=${{ env.VERSION_TAG }} docker compose --env-file .env.local up -d --no-deps --force-recreate --remove-orphans
+            docker compose --env-file .env.local up -d --no-deps --force-recreate --remove-orphans doktasend-app
 
             # Wait for container to be ready
             sleep 5
@@ -85,7 +85,7 @@ jobs:
 
             # Optional: Remove old tagged images except latest/current
             # docker images ghcr.io/dokta-team/doktasend-app --format "{{.Repository}}:{{.Tag}}" \
-            #   | grep -v "${{ env.VERSION_TAG }}" \
+            #   | grep -v "1.0.1" \
             #   | grep -v "latest" \
             #   | xargs -r docker rmi -f
 
