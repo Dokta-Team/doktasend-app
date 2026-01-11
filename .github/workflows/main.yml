@@ -61,7 +61,7 @@ jobs:
           ssh -o StrictHostKeyChecking=accept-new ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
             cd apps/frontend/doktasend-app
 
-            export VERSION_TAG=${{ env.API_VERSION }}
+            export API_VERSION=${{ env.API_VERSION }}
         
             echo "=== DEPLOYING VERSION: ${{ env.API_VERSION }} ==="
 
