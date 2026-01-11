@@ -74,7 +74,6 @@ jobs:
             echo "✅ Deploying Image!"
             VERSION_TAG=${{ env.VERSION_TAG }} docker compose --env-file .env.local up -d --no-deps --force-recreate doktasend-app
 
-
             # docker compose --env-file .env.local up  -d --no-deps --force-recreate --remove-orphans doktasend-app
             echo "6. Verifying..."
             sleep 5  # Wait for container to start
