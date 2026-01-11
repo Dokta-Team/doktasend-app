@@ -38,7 +38,7 @@ jobs:
           docker build --no-cache -t ghcr.io/${{ env.IMAGE_NAME }}:${{ env.API_VERSION }} \
              -t ghcr.io/${{ env.IMAGE_NAME }}:latest .
 
-          docker push ghcr.io/${{ env.IMAGE_NAME }}:${{ env.API_VERSION }}
+          docker push ghcr.io/${{ env.IMAGE_NAME }}:$API_VERSION
           # docker push ghcr.io/${{ env.IMAGE_NAME }}:latest
 
           # Save VERSION_TAG for deployment
