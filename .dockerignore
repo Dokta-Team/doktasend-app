@@ -3,6 +3,7 @@ dist
 .dockerignore
 # Dockerfile
 doktasend.app
+docker-compose.dev.yml
 
 # Logs
 npm-debug.log*
