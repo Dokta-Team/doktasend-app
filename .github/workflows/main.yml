@@ -62,12 +62,12 @@ jobs:
             cd apps/frontend/doktasend-app
 
             export API_VERSION=${{ env.API_VERSION }}
-        
             echo "=== DEPLOYING VERSION: ${{ env.API_VERSION }} ==="
 
             echo "Logging in to GHCR 🔑📦 ...."
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
+            export API_VERSION=${{ env.API_VERSION }}
             API_VERSION=${{ env.API_VERSION }} docker compose --env-file .env.local down --remove-orphans
             # Pull the latest image for doktasend-app
             API_VERSION=${{ env.API_VERSION }}docker compose --env-file .env.local pull doktasend-app
@@ -75,6 +75,7 @@ jobs:
             # Recreate only the frontend container and remove orphans
             # docker compose --env-file .env.local up -d \
             #   --no-deps --force-recreate --remove-orphans doktasend-app
+            export API_VERSION=${{ env.API_VERSION }}
             API_VERSION=${{ env.API_VERSION }} docker compose --env-file .env.local up -d --no-deps --force-recreate --remove-orphans doktasend-app
 
             # Wait for container to be ready
