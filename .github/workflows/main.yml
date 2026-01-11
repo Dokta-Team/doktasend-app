@@ -3,8 +3,7 @@ name: DoktaSend App CI/CD
 on:
   push:
     branches:
-      - main     # adjust if you want other branches too
-
+      - main
 
 env:
   REGISTRY: ghcr.io
@@ -15,11 +14,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout
+      # 1️⃣ Checkout
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Log in to GHCR
+      # 2️⃣ Log in to GHCR
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v2
         with:
@@ -27,7 +26,7 @@ jobs:
           username: ${{ secrets.GHCR_USERNAME }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      # 3. Build & Push Docker image (versioned + latest)
+      # 3️⃣ Build & Push Docker image (versioned + latest)
       - name: Build and push Docker image
         run: |
           BRANCH_NAME=${GITHUB_REF##*/}
@@ -41,49 +40,50 @@ jobs:
           docker push ghcr.io/${{ env.IMAGE_NAME }}:$VERSION_TAG
           docker push ghcr.io/${{ env.IMAGE_NAME }}:latest
 
+          # Save VERSION_TAG for deployment
           echo "VERSION_TAG=$VERSION_TAG" >> $GITHUB_ENV
           echo "IMAGE_FULL_TAG=ghcr.io/${{ env.IMAGE_NAME }}:$VERSION_TAG" >> $GITHUB_ENV
 
-      # 4. Setup SSH for server deployment
+          
+
+      # 4️⃣ Setup SSH for server deployment
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # 5. Deploy latest image on server
-
+      # 5️⃣ Deploy latest image on server
       - name: Deploy to the VPS Server
         run: |
           ssh -o StrictHostKeyChecking=accept-new ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
             cd apps/frontend/doktasend-app
 
             echo "=== DEPLOYING VERSION: ${{ env.VERSION_TAG }} ==="
-            echo "Pulling latest code 📥⬇️ ....."
-            # git pull origin main
 
             echo "Logging in to GHCR 🔑📦 ...."
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
-            echo "🚀 Updating doktasend-app..."
+            # Pull the latest image for doktasend-app
+            VERSION_TAG=${{ env.VERSION_TAG }} docker compose --env-file .env.local pull doktasend-app
 
-            echo "Pulling fresh image with image version: ${{ env.VERSION_TAG }}..."
-            # docker pull ghcr.io/dokta-team/doktasend-app:${{ env.VERSION_TAG }}
-            VERSION_TAG=${{ env.VERSION_TAG }}  docker compose --env-file .env.local pull doktasend-app
-            
-            echo "4. Starting container"
-            echo "✅ Deploying Image!"
-            VERSION_TAG=${{ env.VERSION_TAG }} docker compose --env-file .env.local up -d --no-deps --force-recreate doktasend-app
+            # Recreate only the frontend container and remove orphans
+            VERSION_TAG=${{ env.VERSION_TAG }} docker compose --env-file .env.local up -d \
+              --no-deps --force-recreate --remove-orphans doktasend-app
 
-            # docker compose --env-file .env.local up  -d --no-deps --force-recreate --remove-orphans doktasend-app
-            echo "6. Verifying..."
-            sleep 5  # Wait for container to start
-            
-            echo "Container status:"
-            docker compose ps
+            # Wait for container to be ready
+            sleep 5
 
-            echo "🧹 Cleaning up old images..."
+            # Show current container status
+            docker compose ps -a
+
+            # Clean dangling images
             docker image prune -f --filter "dangling=true"
 
+            # Optional: Remove old tagged images except latest/current
+            docker images ghcr.io/dokta-team/doktasend-app --format "{{.Repository}}:{{.Tag}}" \
+              | grep -v "${VERSION_TAG}" \
+              | grep -v "latest" \
+              | xargs -r docker rmi -f
+
+            echo "✅ Deployment complete!"
           EOF
-
-
