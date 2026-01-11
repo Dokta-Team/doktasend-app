@@ -69,8 +69,9 @@ jobs:
             VERSION_TAG=${{ env.VERSION_TAG }} docker compose --env-file .env.local pull doktasend-app
 
             # Recreate only the frontend container and remove orphans
-            VERSION_TAG=${{ env.VERSION_TAG }} docker compose --env-file .env.local up -d \
-              --no-deps --force-recreate --remove-orphans doktasend-app
+            # VERSION_TAG=${{ env.VERSION_TAG }} docker compose --env-file .env.local up -d \
+            #   --no-deps --force-recreate --remove-orphans doktasend-app
+            VERSION_TAG=${{ env.VERSION_TAG }} docker compose --env-file .env.local up -d --no-deps --force-recreate --remove-orphans doktasend-app
 
             # Wait for container to be ready
             sleep 5
@@ -83,7 +84,7 @@ jobs:
 
             # Optional: Remove old tagged images except latest/current
             docker images ghcr.io/dokta-team/doktasend-app --format "{{.Repository}}:{{.Tag}}" \
-              | grep -v "${VERSION_TAG}" \
+              | grep -v "${{ env.VERSION_TAG }}" \
               | grep -v "latest" \
               | xargs -r docker rmi -f
 

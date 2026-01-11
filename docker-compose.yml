@@ -1,4 +1,4 @@
-name: doktasend-app
+name: doktasend-frontend
 services:
   doktasend-app:
     image: ghcr.io/dokta-team/doktasend-app:${VERSION_TAG}
