@@ -28,6 +28,9 @@ jobs:
       - name: Deploy to the VPS Server
         run: |
           ssh -o StrictHostKeyChecking=accept-new ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
             cd apps/doktasend-app
 
             echo "Pulling latest code 📥⬇️ ....."
