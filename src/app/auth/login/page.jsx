@@ -37,7 +37,7 @@ export default function Login() {
 
 
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
-  console.log("API Base URL", "no base");
+  console.log("API Base URL", "no base",baseURL);
   // const handleSubmit = async (e) => {
   //   try {
   //     e.preventDefault();

@@ -3,7 +3,7 @@ name: DoktaSend App CI/CD
 on:
   push:
     branches:
-      - main
+      - main1
 
 env:
   REGISTRY: ghcr.io
