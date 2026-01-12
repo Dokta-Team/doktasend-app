@@ -28,16 +28,33 @@ jobs:
       - name: Deploy to the VPS Server
         run: |
           ssh -o StrictHostKeyChecking=accept-new ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
             cd apps/doktasend-app
+
+            # Set up nvm
+            export NVM_DIR="$HOME/.nvm"
+            if [ ! -d "$NVM_DIR" ]; then
+              echo "Installing nvm..."
+              curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+            fi
+
+            # Load nvm and install Node.js
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
             echo "Pulling latest code 📥⬇️ ....."
             git pull origin main
 
+            # Ensure Node.js and npm are installed
+            nvm install --lts
+            nvm use --lts
+
+            # Check versions
+            node -v
+            npm -v
+
             echo "Installing dependencies 📦..."
             npm install
+            npm install pm2 -g
 
             echo "Building application 🏗️..."
             npm run build
