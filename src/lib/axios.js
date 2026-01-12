@@ -2,13 +2,22 @@ import axios from 'axios';
 
 // const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5200/api/v1';
 const baseURL = process.env.NEXT_PUBLIC_API_URL || 'https://api.doktasend.com/api/v1';
+export const DOKTA_ACCESS_TOKEN = 'DOKTA_ACCESS_TOKEN'
 
 const api = axios.create({
   baseURL,
   withCredentials: true,
 });
 
-export const DOKTA_ACCESS_TOKEN = 'DOKTA_ACCESS_TOKEN'
+
+// api.interceptors.request.use((config) => {
+//   const token = localStorage.getItem(DOKTA_ACCESS_TOKEN);
+//   if (token) {
+//     config.headers.Authorization = `Bearer ${token}`;
+//   }
+//   return config;
+// });
+
 
 // api.interceptors.request.use(
 //   (config) => {
