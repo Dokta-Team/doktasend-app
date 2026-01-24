@@ -251,7 +251,7 @@ export default function RegisterContent() {
 
               <div className="text-center text-sm text-gray-500 mt-4">
                 Already have an account?{" "}
-                <a href="/api/auth/signin" className="text-primary hover:underline">
+                <a href="/auth/login" className="text-primary hover:underline">
                   Sign in
                 </a>
               </div>
