@@ -17,6 +17,7 @@ export function middleware(req) {
     }
 }
 
+
 export const config = {
     matcher: ['/dashboard/:path*', '/admin/:path*'],
 };
