@@ -241,7 +241,7 @@ export default function RegisterPage() {
               <div className="text-center text-sm text-gray-500 mt-4">
                 Already have an account?{" "}
                 <a
-                  href="/api/auth/signin"
+                  href="/auth/login"
                   className="text-primary hover:underline"
                 >
                   Sign in
