@@ -74,6 +74,16 @@ export const AuthProvider = ({ children }) => {
             if (!storedUserId) {
                 // toast.error(`Logout and login again`);
                 setContextLoading(false);
+                if (window.location.pathname === '/auth/login') {
+                    return
+                }
+                toast("Please log out", {
+                    // description: "Success",
+                    action: {
+                        label: "Log out now",
+                        onClick: () => logout(),
+                    },
+                })
                 return;
             }
 
@@ -89,13 +99,13 @@ export const AuthProvider = ({ children }) => {
                 setContextLoading(false);
             } else {
                 toast.error(`Please login again`);
-                 setContextLoading(false);
+                setContextLoading(false);
             }
 
         } catch (error) {
             toast.error(`Error loading user: ${error.message}`);
-             setContextLoading(false);
-        } 
+            setContextLoading(false);
+        }
     }, []);
 
     const saveUser = (userData) => {
