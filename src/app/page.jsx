@@ -9,11 +9,11 @@ export default function HomePageRedirect() {
 // import { useEffect } from "react";
 // import { useRouter } from "next/navigation";
 
-// const DOKTA_ACCESS_TOKEN = process.env.DOKTA_ACCESS_TOKEN
+// const DOKTA_SEND_ACCESS_TOKEN = process.env.DOKTA_SEND_ACCESS_TOKEN
 // export default function HomePageRedirect() {
 //   const router = useRouter();
 //   useEffect(() => {
-//     const token = localStorage.getItem(DOKTA_ACCESS_TOKEN|| "DOKTA_ACCESS_TOKEN");
+//     const token = localStorage.getItem(DOKTA_SEND_ACCESS_TOKEN|| "DOKTA_SEND_ACCESS_TOKEN");
 //     if (token) {
 //       router.replace("/dashboard"); // Token exists → redirect to dashboard
 //     } else {

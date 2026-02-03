@@ -6,7 +6,7 @@ import { authEvents, post } from "@/lib/http";
 const AuthContext = createContext();
 
 const DOKTA_ACCESS_USER = process.env.NEXT_PUBLIC_DOKTA_ACCESS_USER || "DOKTA_ACCESS_USER";
-const DOKTA_ACCESS_TOKEN = process.env.NEXT_PUBLIC_DOKTA_ACCESS_TOKEN || "DOKTA_ACCESS_TOKEN";
+const DOKTA_SEND_ACCESS_TOKEN = process.env.NEXT_PUBLIC_DOKTA_SEND_ACCESS_TOKEN || "DOKTA_SEND_ACCESS_TOKEN";
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
 
     const saveUserToken = (userToken) => {
         setUserToken(userToken);
-        localStorage.setItem(DOKTA_ACCESS_TOKEN, userToken);
+        localStorage.setItem(DOKTA_SEND_ACCESS_TOKEN, userToken);
     };
 
     const handleLogout = async (message = '') => {
@@ -52,10 +52,10 @@ export const AuthProvider = ({ children }) => {
     // Logout user
     const logout = async () => {
         try {
-            await post("sponsor/logout"); // API call
+            await post("auth/logout"); // API call
             setUser(null);
             localStorage.removeItem(DOKTA_ACCESS_USER);
-            localStorage.removeItem(DOKTA_ACCESS_TOKEN);
+            localStorage.removeItem(DOKTA_SEND_ACCESS_TOKEN);
             window.location.href = "/auth/login";
         } catch (err) {
             console.error("Logout failed", err);

@@ -1,4 +1,4 @@
-import api, { DOKTA_ACCESS_TOKEN } from './axios';
+import api, { DOKTA_SEND_ACCESS_TOKEN } from './axios';
 import { toast } from "sonner";
 const DOKTA_ACCESS_USER = process.env.NEXT_PUBLIC_DOKTA_ACCESS_USER || 'DOKTA_ACCESS_USER';
 
@@ -27,7 +27,7 @@ const handleError = (error) => {
                 };
             case 401:
                 // window.location.href = '/auth/login';
-                localStorage.removeItem(DOKTA_ACCESS_TOKEN);
+                localStorage.removeItem(DOKTA_SEND_ACCESS_TOKEN);
                 localStorage.removeItem(DOKTA_ACCESS_USER);
                 authEvents.triggerAuthFailure();
                 return {
@@ -151,7 +151,7 @@ export async function setToken(token) {
     // let validToken = await token || await getValidToken();
     let validToken = token;
     if (validToken) {
-        localStorage.setItem(DOKTA_ACCESS_TOKEN, token)
+        localStorage.setItem(DOKTA_SEND_ACCESS_TOKEN, token)
         // api.defaults.headers.common["Authorization"] = `Basic ${validToken}`
     } else {
         delete api.defaults.headers.common["Authorization"];
