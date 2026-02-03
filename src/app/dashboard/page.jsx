@@ -14,13 +14,20 @@ const SponsorDashboardClient = () => {
   const [recipients, setRecipients] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setloading] = useState(false)
+  const [isUserLoaded, setIsUserLoaded] = useState(false);
   const router = useRouter();
-  const user = useAuthContext()
+  const { contextLoading, user } = useAuthContext()
 
   useLayoutEffect(() => {
 
     fetchDashboardData();
   }, []);
+
+  useEffect(() => {
+    if (user !== null) { // user is loaded (could be null or actual user object)
+      setIsUserLoaded(true);
+    }
+  }, [user]);
 
   const fetchDashboardData = async () => {
     try {
@@ -51,10 +58,21 @@ const SponsorDashboardClient = () => {
       })
     }
   };
+
+  if (contextLoading || !isUserLoaded) {
+    return (
+      <div className="p-6 flex items-center justify-center h-screen">
+        <Spinner />
+      </div>
+    );
+  }
+
   return (
     <div className="p-6">
+      {/* {(loading || contextLoading) && <Spinner />} */}
       {loading && <Spinner />}
-      <h2 className="text-2xl font-semibold mb-4">Welcome, {'userName'}</h2>
+      {/* {contextLoading && <Spinner />} */}
+      <h2 className="text-2xl font-semibold mb-4 capitalize">Welcome, {user?.firstName}</h2>
       {/* {userName && (
         <h2 className="text-2xl font-semibold mb-4">Welcome, {userName}</h2>
       )}{" "} */}

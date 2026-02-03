@@ -19,6 +19,7 @@ import { AlertCircle } from "lucide-react";
 import { post, setToken } from "@/lib/http";
 import { useAuthContext } from "@/context/authContext";
 import { toast } from "sonner"
+import { createCache } from "@/app/action/redis.action";
 
 export default function Login() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function Login() {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { saveUser, saveUserToken } = useAuthContext();
+  const { saveUserId, saveUserToken, setUser } = useAuthContext();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,57 +38,7 @@ export default function Login() {
 
 
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
-  // console.log("API Base URL", "no base",baseURL);
-  // const handleSubmit = async (e) => {
-  //   try {
-  //     e.preventDefault();
-  //     setError("");
 
-  //     // Validate form
-  //     if (!formData.email || !formData.password) {
-  //       setError("Email and password are required");
-  //       return;
-  //     }
-
-  //     setIsLoading(true);
-
-  //     const response = await post('sponsor/login', formData)
-  //     console.log("Login response:", response);
-  //     if (response && response.success === true) {
-  //       const { ...sponsor } = response.payload.sponsor;
-  //       const { accessToken, } = response.payload;
-  //       if (sponsor.verified === false) {
-  //         await post("auth/resend-otp", {
-  //           email: formData.email.toLowerCase(),
-  //         });
-  //         // send a new code here
-  //         setTimeout(() => {
-  //           setIsLoading(false);
-  //         }, 4000);
-  //         return router.push(`/auth/verify?email=${formData.email}`);
-  //       }
-  //       if (response.payload.role === 'admin') {
-  //         setIsLoading(false);
-  //         return router.push("/admin");
-  //       }
-  //       else {
-  //         setToken(accessToken)
-  //         saveUserToken(accessToken)
-  //         saveUser(sponsor)
-  //         setIsLoading(false);
-  //         return router.push("/dashboard");
-  //       }
-  //     }
-  //     else {
-  //       setIsLoading(false);
-  //      return toast.warning(response?.message || "Login failed")
-  //     }
-  //   } catch (error) {
-  //     // setError(error.message);
-  //     toast.error(error?.message)
-  //     setIsLoading(false);
-  //   }
-  // };
 
   const handleSubmit = async (e) => {
     try {
@@ -126,9 +77,9 @@ export default function Login() {
         else {
           setToken(accessToken);
           saveUserToken(accessToken);
-          saveUser(sponsor);
-
-          // Navigate first, then stop loading
+          saveUserId(sponsor._id);
+          await createCache(sponsor._id, sponsor);
+          setUser(sponsor);
           router.push("/dashboard");
           setIsLoading(false);
           return;
