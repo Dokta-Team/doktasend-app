@@ -99,6 +99,16 @@ export const AuthProvider = ({ children }) => {
                 setContextLoading(false);
             } else {
                 toast.error(`Please login again`);
+                   if (window.location.pathname === '/auth/login') {
+                    return
+                }
+                toast("Please log out", {
+                    // description: "Success",
+                    action: {
+                        label: "Log out now",
+                        onClick: () => logout(),
+                    },
+                })
                 setContextLoading(false);
             }
 
