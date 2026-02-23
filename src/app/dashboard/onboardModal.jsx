@@ -126,7 +126,7 @@ export default function OnboardingModal(props) {
 
 
                     <div className="space-y-2">
-                        <Label htmlFor="country">Country</Label>
+                        <Label htmlFor="country">Gender</Label>
 
                         <select
                             id="gender"
