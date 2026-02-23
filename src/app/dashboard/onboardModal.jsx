@@ -89,43 +89,56 @@ export default function OnboardingModal(props) {
                         value={recipientId}
                         onChange={(e) => setRecipientId(e.target.value)}
                     /> */}
+                    <div className="space-y-2 text-muted-foreground">
+                        <Label htmlFor="country">Full Name</Label>
+                        <Input
+                            name="fullName"
+                            placeholder="Full Name"
+                            value={formData.fullName}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="space-y-2 text-muted-foreground">
+                        <Label htmlFor="country">Mobile</Label>
+                        <Input
+                            name="mobile"
+                            placeholder="Mobile"
+                            value={formData.mobile}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="space-y-2 text-muted-foreground">
+                        <Label htmlFor="country">Address</Label>
+                        <Input
+                            name="address"
+                            placeholder="Address"
+                            value={formData.address}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="space-y-2 text-muted-foreground">
+                        <Label htmlFor="country">Email (optional)</Label>
+                        <Input
+                            name="email"
+                            placeholder="Email (optional)"
+                            required={false}
+                            value={formData.email}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="space-y-2 text-muted-foreground">
+                        <Label htmlFor="country">Date of Birth</Label>
+                        <Input
+                            name="dateOfBirth"
+                            placeholder="Date of Birth"
+                            required={true}
+                            type="date"
+                            value={formData.dateOfBirth}
+                            onChange={handleChange}
+                        />
+                    </div>
 
-                    <Input
-                        name="fullName"
-                        placeholder="Full Name"
-                        value={formData.fullName}
-                        onChange={handleChange}
-                    />
-                    <Input
-                        name="mobile"
-                        placeholder="Mobile"
-                        value={formData.mobile}
-                        onChange={handleChange}
-                    />
-                    <Input
-                        name="address"
-                        placeholder="Address"
-                        value={formData.address}
-                        onChange={handleChange}
-                    />
-                    <Input
-                        name="email"
-                        placeholder="Email (optional)"
-                        required={false}
-                        value={formData.email}
-                        onChange={handleChange}
-                    />
-                    <Input
-                        name="dateOfBirth"
-                        placeholder="Date of Birth"
-                        required={true}
-                        type="date"
-                        value={formData.dateOfBirth}
-                        onChange={handleChange}
-                    />
-
-
-                    <div className="space-y-2">
+                    <div className="space-y-2 text-muted-foreground">
                         <Label htmlFor="country">Gender</Label>
 
                         <select
