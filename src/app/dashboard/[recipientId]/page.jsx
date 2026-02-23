@@ -53,7 +53,7 @@ const RecipientDetailsPage = () => {
     }
   }
 
-  if (loading) return <Spinner/>
+  if (loading) return <Spinner />
   if (!recipientId) return <p>No recipient data available.</p>;
 
   return (
@@ -95,6 +95,18 @@ const RecipientDetailsPage = () => {
                   <CardTitle className="text-xl font-semibold">
                     {recipient?.fullName}
                   </CardTitle>
+                  <p className="text-gray-600">
+                    Mobile: {recipient?.mobile ? recipient?.mobile : "Not provided"}
+                  </p>
+                  <p className="text-gray-600">
+                    Email: {recipient?.email !== "default@gmail.com" ? recipient?.email?.toLowerCase() : "Not provided"}
+                  </p>
+                  <p className="text-gray-600">
+                    Date of Birth: {recipient?.dateOfBirth ? formatAccountDate(recipient?.dateOfBirth || new Date()) : "Not provided"}
+                  </p>
+                  <p className="text-gray-600 capitalize">
+                    Gender: {recipient?.gender}
+                  </p>
                   <p className="text-gray-600">
                     {/* {recipient.age} years • */}
                     Package: {recipient?.sponsor?.plan}

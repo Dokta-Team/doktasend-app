@@ -6,6 +6,15 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { post } from "@/lib/http";
 import { toast } from "sonner";
+import { Label } from "@/components/ui/label";
+
+
+const genders = [
+    { name: "Select Gender", value: "" },
+    { name: "Male", value: "male" },
+    { name: "Female", value: "female" },
+    { name: "Other", value: "other" }
+]
 
 
 export default function OnboardingModal(props) {
@@ -16,12 +25,15 @@ export default function OnboardingModal(props) {
         mobile: "",
         address: "",
         email: "",
+        dateOfBirth: "",
+        gender: "",
     });
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        console.log("name", name, "value", value);
         setFormData(prev => ({
             ...prev,
             [name]: value,
@@ -30,15 +42,15 @@ export default function OnboardingModal(props) {
 
 
     const handleSubmit = async () => {
-        const { fullName, mobile, address, email } = formData;
-        if (!fullName.trim() || !mobile.trim() || !address.trim()) {
+        console.log("formData", formData);
+        const { fullName, mobile, address, email, gender, dateOfBirth } = formData;
+        if (!fullName.trim() || !mobile.trim() || !address.trim() || !gender.trim() || !dateOfBirth.trim()) {
             toast("Please fill in all required fields");
             return;
         }
-
         setLoading(true);
         try {
-            const payload = { fullName: fullName, mobile, address };
+            const payload = { fullName: fullName, mobile, address, gender, dateOfBirth };
             payload.email = "default@gmail.com"
             if (email.trim()) payload.email = email;
             const response = await post("recipient", payload);
@@ -61,13 +73,6 @@ export default function OnboardingModal(props) {
             })
         } finally {
             setLoading(false);
-            // toast(error?.message || "Error with your request", {
-            //     description: "Uh oh! Something went wrong.",
-            //     action: {
-            //         label: "Try again",
-            //         onClick: () => handleSubmit(),
-            //     },
-            // })
         }
     };
 
@@ -110,6 +115,33 @@ export default function OnboardingModal(props) {
                         value={formData.email}
                         onChange={handleChange}
                     />
+                    <Input
+                        name="dateOfBirth"
+                        placeholder="Date of Birth"
+                        required={true}
+                        type="date"
+                        value={formData.dateOfBirth}
+                        onChange={handleChange}
+                    />
+
+
+                    <div className="space-y-2">
+                        <Label htmlFor="country">Country</Label>
+
+                        <select
+                            id="gender"
+                            name="gender"
+                            value={formData.gender}
+                            onChange={handleChange}
+                            className="px-3 py-2 border rounded-md text-sm w-full"
+                        >
+                            {genders.map((gender) => (
+                                <option key={gender.value} value={gender.value}>
+                                    {gender.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
 
                     {/* <Button onClick={handleSubmit} disabled={loading || !recipientId}>
                         {loading ? "Submitting..." : "Submit"}
@@ -120,7 +152,9 @@ export default function OnboardingModal(props) {
                             loading ||
                             !formData.fullName.trim() ||
                             !formData.mobile.trim() ||
-                            !formData.address.trim()
+                            !formData.address.trim() ||
+                            !formData.gender.trim() ||
+                            !formData.dateOfBirth.trim()
                         }
                     >
                         {loading ? "Submitting..." : "Submit"}
