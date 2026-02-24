@@ -27,6 +27,7 @@ export default function OnboardingModal(props) {
         email: "",
         dateOfBirth: "",
         gender: "",
+        medicalHistory: "",
     });
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -43,25 +44,26 @@ export default function OnboardingModal(props) {
 
     const handleSubmit = async () => {
         console.log("formData", formData);
-        const { fullName, mobile, address, email, gender, dateOfBirth } = formData;
-        if (!fullName.trim() || !mobile.trim() || !address.trim() || !gender.trim() || !dateOfBirth.trim()) {
+        const { fullName, mobile, address, email, gender, dateOfBirth, medicalHistory } = formData;
+        if (!fullName.trim() || !mobile.trim() || !address.trim() || !gender.trim() || !dateOfBirth.trim() || !medicalHistory.trim()) {
             toast("Please fill in all required fields");
             return;
         }
         setLoading(true);
         try {
-            const payload = { fullName: fullName, mobile, address, gender, dateOfBirth };
+            const payload = { fullName: fullName, mobile, address, gender, dateOfBirth, medicalHistory };
             payload.email = "default@gmail.com"
-            if (email.trim()) payload.email = email;
+            if (email.trim()) payload.email = email.toLowerCase();
             const response = await post("recipient", payload);
             if (response?.success) {
                 router.refresh();
                 fetchDashboardData();
                 onClose();
                 // reset form
-                setFormData({ fullName: "", mobile: "", address: "", email: "" });
+                setFormData({ fullName: "", mobile: "", address: "", email: "", gender: "", dateOfBirth: "", medicalHistory: "" });
             } else {
                 toast(response?.message || "Something went wrong");
+                setLoading(false);
             }
         } catch (error) {
             toast(error?.message || "Error with your request", {
@@ -79,16 +81,11 @@ export default function OnboardingModal(props) {
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent>
+            <DialogContent className="overflow-y-auto max-h-[95vh]">
                 <DialogHeader>
                     <DialogTitle>Enter Recipient Details</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4 mt-2">
-                    {/* <Input
-                        placeholder="e.g. ABC123"
-                        value={recipientId}
-                        onChange={(e) => setRecipientId(e.target.value)}
-                    /> */}
                     <div className="space-y-2 text-muted-foreground">
                         <Label htmlFor="country">Full Name</Label>
                         <Input
@@ -156,6 +153,18 @@ export default function OnboardingModal(props) {
                         </select>
                     </div>
 
+                    <div className="space-y-2 text-muted-foreground">
+                        <Label htmlFor="country">Medical History</Label>
+
+                        <textarea
+                            id="medicalHistory"
+                            name="medicalHistory"
+                            value={formData.medicalHistory}
+                            onChange={handleChange}
+                            className="px-3 py-2 border rounded-md text-sm w-full"
+                        >
+                        </textarea>
+                    </div>
                     {/* <Button onClick={handleSubmit} disabled={loading || !recipientId}>
                         {loading ? "Submitting..." : "Submit"}
                     </Button> */}
