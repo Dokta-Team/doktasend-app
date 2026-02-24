@@ -176,7 +176,8 @@ export default function OnboardingModal(props) {
                             !formData.mobile.trim() ||
                             !formData.address.trim() ||
                             !formData.gender.trim() ||
-                            !formData.dateOfBirth.trim()
+                            !formData.dateOfBirth.trim() ||
+                            !formData.medicalHistory.trim()
                         }
                     >
                         {loading ? "Submitting..." : "Submit"}
