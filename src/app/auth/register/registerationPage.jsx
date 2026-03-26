@@ -46,6 +46,10 @@ export default function RegisterContent() {
   async function getAllCountries() {
     try {
       const response = await fetch('/api/countries');
+      if (!response.ok) {
+        toast.error("Unable to complete request");
+        return setLoadingCountries(false);
+      }
       const data = await response.json();
       setCountries(data);
       setLoadingCountries(false);
@@ -102,7 +106,7 @@ export default function RegisterContent() {
 
   return (
     <Fragment>
-     {loadingCountries && <Spinner />}
+      {loadingCountries && <Spinner />}
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <Card className="w-full max-w-md p-6 my-12">
           <CardHeader>
