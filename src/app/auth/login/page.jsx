@@ -75,6 +75,7 @@ export default function Login() {
           return;
         }
         else {
+          // window.location.href = "/dashboard";
           setToken(accessToken);
           saveUserToken(accessToken);
           saveUserId(sponsor._id);

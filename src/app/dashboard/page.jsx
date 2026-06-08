@@ -34,7 +34,7 @@ const SponsorDashboardClient = () => {
       setloading(true)
       const response = await get("recipient/sponsor-recipients");
       if (response && response.success === true) {
-        setRecipients(response.payload)
+        setRecipients(response?.payload?.docs)
         setloading(false)
       }
       else {

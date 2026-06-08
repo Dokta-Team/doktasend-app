@@ -123,15 +123,6 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem(DOKTA_SEND_ACCESS_USER, JSON.stringify(userData));
     };
 
-    //   const saveUser = useCallback((userData) => {
-    //     setUser(userData);
-    //     // Store user ID for cache lookup
-    //     if (userData?._id) {
-    //         localStorage.setItem(DOKTA_SEND_ACCESS_USER, userData.id);
-    //         setUserId(userData.id);
-    //     }
-    // }, []);
-
     const saveUserId = useCallback((id) => {
         setUserId(id);
         localStorage.setItem(DOKTA_SEND_ACCESS_USER, id);

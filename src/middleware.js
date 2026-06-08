@@ -21,7 +21,7 @@ export function middleware(req) {
     try {
         const token =
             req.cookies.get('DOKTA_SEND_ACCESS_TOKEN')?.value;
-
+        console.log("Middlewqare back: ", token)
         const isProtectedRoute =
             req.nextUrl.pathname.startsWith('/dashboard') ||
             req.nextUrl.pathname.startsWith('/admin');
