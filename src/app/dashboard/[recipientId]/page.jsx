@@ -34,6 +34,7 @@ const RecipientDetailsPage = () => {
       setLoading(true)
       const response = await get(`recipient/${recipientId}`);
       if (response && response.success === true) {
+        console.log("Recipient details: ", response.payload)
         setRecipient(response.payload)
         setLoading(false)
       }
@@ -68,7 +69,7 @@ const RecipientDetailsPage = () => {
           <div className="mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                Recipient Profile
+                {recipient?.fullName} Profile
               </h1>
               <p className="text-sm text-gray-500">
                 Manage and monitor recipient healthcare
