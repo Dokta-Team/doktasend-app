@@ -3,7 +3,7 @@ name: DoktaSend App CI/CD
 on:
   push:
     branches:
-      - main  # Keeping your original branch name
+      - main11  # Keeping your original branch name
 
 env:
   REGISTRY: ghcr.io

@@ -4,8 +4,9 @@ class RedisClient {
     constructor() {
         console.log("NEXT_PUBLIC_REDIS_HOST", "process.env.NEXT_PUBLIC_REDIS_HOST")
         console.log("isProduction", process.env.NEXT_PUBLIC_REDIS_HOST)
+        
         this.client = new Redis({
-            host: process.env.NEXT_PUBLIC_REDIS_HOST || 'localhost',
+            host: process.env.NEXT_PUBLIC_REDIS_HOST || 'redis',
             port: 6379,
             // Optional: Add password if you set one
             // password: process.env.REDIS_PASSWORD,

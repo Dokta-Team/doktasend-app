@@ -1,18 +1,18 @@
-name: doktasend-frontend
 services:
-  doktasend-app:
-    image: ghcr.io/dokta-team/doktasend-app:${API_VERSION}
-    # container_name: doktasend-app
+  doktasend-app-frontend:
+    image: ghcr.io/dokta-team/doktasend-app:${VERSION_TAG}
+    container_name: doktasend-app-frontend
     ports:
-      - "3110:3110"  # Map port 3110 of the container to port 3110 on the host
+      - "3110:3110"  
     env_file:
-      - .env.local
+      - .env
     networks:
-      - doktasend_network
+      - shared
     environment:
       - NODE_ENV=production
     restart: unless-stopped
    
 networks:
-  doktasend_network:
-    driver: bridge
+  shared:
+    external: true
+    name: doktasend_network
